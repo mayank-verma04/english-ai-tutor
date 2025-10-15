@@ -1,0 +1,36 @@
+{
+  "name": "ai-tutor-backend",
+  "version": "1.0.0",
+  "description": "AI Tutor Backend where we have the backend for the project of Learning English with AI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mayank-verma04/ai-tutor-backend.git"
+  },
+  "keywords": [
+    "ai-tutor",
+    "api",
+    "backend",
+    "mongodb"
+  ],
+  "author": "Mayank Verma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mayank-verma04/ai-tutor-backend/issues"
+  },
+  "homepage": "https://github.com/mayank-verma04/ai-tutor-backend#readme",
+  "dependencies": {
+    "@google/genai": "^1.20.0",
+    "@google/generative-ai": "^0.24.1",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.0"
+  }
+}
