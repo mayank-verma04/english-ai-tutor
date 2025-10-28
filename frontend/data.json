@@ -1,0 +1,261 @@
+{
+  "module": "composition",
+  "level": "beginner",
+  "unitNo": 2,
+  "step": "shortParagraphs",
+  "content": {
+    "paragraphs": [
+      {
+        "sequence": 1,
+        "prompt": "Write a paragraph about My Daily Routine",
+        "answer": "I wake up at 6 am. I brush my teeth and have breakfast. I go to school. After school, I play with my friends. Then I do my homework and sleep."
+      },
+      {
+        "sequence": 2,
+        "prompt": "Write a paragraph about My Favorite Food",
+        "answer": "I like pizza. It is cheesy and delicious. I eat it with my family. I also like ice cream. My favorite flavor is chocolate."
+      },
+      {
+        "sequence": 3,
+        "prompt": "Write a paragraph about My Pet",
+        "answer": "I have a dog named Bruno. He is very playful. I feed him every day. We play together in the garden. I love my pet very much."
+      },
+      {
+        "sequence": 4,
+        "prompt": "Write a paragraph about My School",
+        "answer": "I go to a small school near my home. My teachers are kind. I have many friends. We study, play, and have fun every day."
+      },
+      {
+        "sequence": 5,
+        "prompt": "Write a paragraph about My Family",
+        "answer": "I have a small family. I live with my parents and brother. We eat together and play games. I love my family very much."
+      },
+      {
+        "sequence": 6,
+        "prompt": "Write a paragraph about My Hobby",
+        "answer": "I like painting in my free time. I use colors and brushes to make pictures. Painting makes me happy and creative."
+      },
+      {
+        "sequence": 7,
+        "prompt": "Write a paragraph about My Favorite Game",
+        "answer": "I like playing football. I play with my friends in the park. Football keeps me active and fit."
+      },
+      {
+        "sequence": 8,
+        "prompt": "Write a paragraph about My Best Friend",
+        "answer": "My best friend is Riya. She helps me with studies and plays with me. We share our secrets and have fun together."
+      },
+      {
+        "sequence": 9,
+        "prompt": "Write a paragraph about My Birthday",
+        "answer": "I celebrated my birthday last week. I invited my friends. We had a cake and played games. I felt very happy."
+      },
+      {
+        "sequence": 10,
+        "prompt": "Write a paragraph about A Sunny Day",
+        "answer": "The sun is shining brightly. I went out to play in the garden. I felt warm and happy under the sun."
+      },
+      {
+        "sequence": 11,
+        "prompt": "Write a paragraph about A Rainy Day",
+        "answer": "It was raining today. I used my umbrella and went outside. I enjoyed playing in the rain."
+      },
+      {
+        "sequence": 12,
+        "prompt": "Write a paragraph about My Favorite Fruit",
+        "answer": "I like apples. They are sweet and juicy. I eat an apple every morning. Apples keep me healthy."
+      },
+      {
+        "sequence": 13,
+        "prompt": "Write a paragraph about My Favorite Color",
+        "answer": "My favorite color is blue. I like blue clothes and toys. Blue makes me feel calm."
+      },
+      {
+        "sequence": 14,
+        "prompt": "Write a paragraph about My Room",
+        "answer": "I have a small room. I keep my books and toys neatly. My room is clean and comfortable."
+      },
+      {
+        "sequence": 15,
+        "prompt": "Write a paragraph about A Trip to the Park",
+        "answer": "I went to the park yesterday. I saw many trees and flowers. I played on the swings and slides."
+      },
+      {
+        "sequence": 16,
+        "prompt": "Write a paragraph about Helping Others",
+        "answer": "I help my friends in studies. I also help my parents at home. Helping others makes me happy."
+      },
+      {
+        "sequence": 17,
+        "prompt": "Write a paragraph about My Favorite Teacher",
+        "answer": "My favorite teacher is Mrs. Sharma. She teaches us kindly. I like her lessons and learn a lot."
+      },
+      {
+        "sequence": 18,
+        "prompt": "Write a paragraph about A Picnic",
+        "answer": "I went on a picnic with my family. We ate food and played games. It was a fun day."
+      },
+      {
+        "sequence": 19,
+        "prompt": "Write a paragraph about My Village",
+        "answer": "I live in a small village. There are trees, fields, and animals. Life is peaceful and simple here."
+      },
+      {
+        "sequence": 20,
+        "prompt": "Write a paragraph about A Visit to the Zoo",
+        "answer": "I visited the zoo last Sunday. I saw lions, tigers, and monkeys. It was an exciting experience."
+      },
+      {
+        "sequence": 21,
+        "prompt": "Write a paragraph about My Favorite Animal",
+        "answer": "I like dogs very much. They are friendly and playful. I take care of my dog daily."
+      },
+      {
+        "sequence": 22,
+        "prompt": "Write a paragraph about A Beautiful Garden",
+        "answer": "I visited a beautiful garden. There were many colorful flowers. I enjoyed walking and seeing the plants."
+      },
+      {
+        "sequence": 23,
+        "prompt": "Write a paragraph about A Day at the Beach",
+        "answer": "I went to the beach yesterday. I played in the sand and collected shells. The sea looked beautiful."
+      },
+      {
+        "sequence": 24,
+        "prompt": "Write a paragraph about Learning to Swim",
+        "answer": "I learned swimming in summer. I practiced in the pool daily. Now I can swim confidently."
+      },
+      {
+        "sequence": 25,
+        "prompt": "Write a paragraph about A Visit to the Museum",
+        "answer": "I visited a museum with my school. I saw many old things and paintings. It was very interesting."
+      },
+      {
+        "sequence": 26,
+        "prompt": "Write a paragraph about My Favorite Season",
+        "answer": "I like winter the most. The weather is cool and pleasant. I enjoy wearing warm clothes and drinking hot chocolate."
+      },
+      {
+        "sequence": 27,
+        "prompt": "Write a paragraph about Helping at Home",
+        "answer": "I help my mother in cooking. I also clean my room. Helping at home makes me responsible."
+      },
+      {
+        "sequence": 28,
+        "prompt": "Write a paragraph about A Trip to the Market",
+        "answer": "I went to the market with my mother. We bought vegetables and fruits. I learned their names."
+      },
+      {
+        "sequence": 29,
+        "prompt": "Write a paragraph about Watching a Movie",
+        "answer": "I watched a cartoon movie. It was fun and interesting. I laughed a lot while watching it."
+      },
+      {
+        "sequence": 30,
+        "prompt": "Write a paragraph about My Favorite Toy",
+        "answer": "I have a toy car. I play with it daily. It is colorful and fast."
+      },
+      {
+        "sequence": 31,
+        "prompt": "Write a paragraph about A Rainy Morning",
+        "answer": "It rained in the morning. I enjoyed listening to the rain. I also drank hot tea."
+      },
+      {
+        "sequence": 32,
+        "prompt": "Write a paragraph about A Walk in the Garden",
+        "answer": "I went for a walk in the garden. I saw butterflies and birds. It was peaceful and nice."
+      },
+      {
+        "sequence": 33,
+        "prompt": "Write a paragraph about My Favorite Sport",
+        "answer": "I like cricket. I play it with my friends. Cricket keeps me active and fit."
+      },
+      {
+        "sequence": 34,
+        "prompt": "Write a paragraph about Helping a Friend",
+        "answer": "My friend fell down. I helped him to stand up. He thanked me."
+      },
+      {
+        "sequence": 35,
+        "prompt": "Write a paragraph about My Favorite Cartoon",
+        "answer": "I like Tom and Jerry cartoon. I watch it every day. It makes me laugh."
+      },
+      {
+        "sequence": 36,
+        "prompt": "Write a paragraph about Visiting a Farm",
+        "answer": "I visited a farm with my family. I saw cows, goats, and chickens. I helped feed the animals."
+      },
+      {
+        "sequence": 37,
+        "prompt": "Write a paragraph about Learning to Ride a Bicycle",
+        "answer": "I learned to ride a bicycle. I practiced every day. Now I can ride without help."
+      },
+      {
+        "sequence": 38,
+        "prompt": "Write a paragraph about My Favorite Fruit Tree",
+        "answer": "There is a mango tree in my garden. I like eating its fruits. The tree is tall and green."
+      },
+      {
+        "sequence": 39,
+        "prompt": "Write a paragraph about A Visit to the Library",
+        "answer": "I went to the library with my class. I read many storybooks. It was a quiet and nice place."
+      },
+      {
+        "sequence": 40,
+        "prompt": "Write a paragraph about A Morning Walk",
+        "answer": "I go for a morning walk every day. I see birds and flowers. Walking keeps me healthy."
+      },
+      {
+        "sequence": 41,
+        "prompt": "Write a paragraph about My Favorite Game",
+        "answer": "I like playing hide and seek. I play with my friends. It is very fun."
+      },
+      {
+        "sequence": 42,
+        "prompt": "Write a paragraph about A Visit to the Garden",
+        "answer": "I visited a big garden. There were colorful flowers and butterflies. I enjoyed it a lot."
+      },
+      {
+        "sequence": 43,
+        "prompt": "Write a paragraph about My Birthday Celebration",
+        "answer": "I celebrated my birthday with my friends. We played games and ate cake. I felt very happy."
+      },
+      {
+        "sequence": 44,
+        "prompt": "Write a paragraph about Helping in the Kitchen",
+        "answer": "I help my mother in the kitchen. I wash vegetables and clean utensils. I enjoy helping her."
+      },
+      {
+        "sequence": 45,
+        "prompt": "Write a paragraph about My Favorite Book",
+        "answer": "I like reading storybooks. My favorite book is 'The Jungle Book'. I read it every week."
+      },
+      {
+        "sequence": 46,
+        "prompt": "Write a paragraph about A Visit to the Zoo",
+        "answer": "I visited the zoo with my class. I saw many animals like lions and monkeys. It was exciting."
+      },
+      {
+        "sequence": 47,
+        "prompt": "Write a paragraph about A Walk by the River",
+        "answer": "I went for a walk by the river. I saw fish swimming. The river looked beautiful."
+      },
+      {
+        "sequence": 48,
+        "prompt": "Write a paragraph about My Favorite Holiday",
+        "answer": "I like Diwali the most. We light lamps and enjoy sweets. It is a fun festival."
+      },
+      {
+        "sequence": 49,
+        "prompt": "Write a paragraph about Visiting Grandparents",
+        "answer": "I visited my grandparents last weekend. I played with my cousins. We ate delicious food together."
+      },
+      {
+        "sequence": 50,
+        "prompt": "Write a paragraph about A Day at School",
+        "answer": "I went to school in the morning. We learned new things and played games. I enjoyed the day."
+      }
+    ]
+  },
+  "source": "core"
+}

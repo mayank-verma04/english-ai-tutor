@@ -51,7 +51,7 @@ const ShortParagraphs = () => {
     }
   };
 
-  const handleParagraphClick = (sequence: number) => {
+  const handleParagraphClick = (sequence) => {
     navigate(
       `/short-paragraph?module=${module}&level=${level}&sequence=${sequence}`
     );
@@ -81,13 +81,6 @@ const ShortParagraphs = () => {
           </div>
         </div>
       </header>
-      {level === 'beginner' ? (
-        <div className="bg-red-200 border border-red-900 rounded p-4">
-          Error in MongoDB and will be fixed later
-        </div>
-      ) : (
-        ''
-      )}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Badge
