@@ -264,32 +264,32 @@ const OnDemandTestPage = () => {
               </CardContent>
             </Card>
 
-            <Accordion type="single" collapsible className="w-full bg-card rounded-lg border border-border shadow-sm">
+            <Accordion type="single" collapsible className="w-full text-wrap bg-card rounded-lg border border-border shadow-sm">
               {questions.map((q, index) => {
                 const userAnswer = answers[index] || "No answer provided";
                 const isCorrect = config.questionType === 'mcq' ? userAnswer.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase() : null;
                 return (
-                  <AccordionItem key={index} value={`item-${index}`} className="border-b last:border-0 px-4">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center gap-3 w-full text-left">
+                  <AccordionItem key={index} value={`item-${index}`} className="text-wrap w-full border-b last:border-0 px-4">
+                    <AccordionTrigger className="hover:no-underline w-full text-wrap py-4">
+                      <div className="flex text-wrap items-center gap-3 w-full text-left">
                         {config.questionType === 'mcq' && (
                           isCorrect 
                             ? <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" /> 
                             : <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                         )}
-                        <span className="font-medium truncate flex-1">{q.questionText}</span>
+                        <span className="text-wrap w-full font-medium truncate flex-1">{q.questionText}</span>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-4 space-y-3">
-                       <div className="grid gap-2">
-                          <div className="p-3 bg-muted/50 rounded-md border border-border">
-                             <span className="text-xs font-bold text-muted-foreground uppercase block mb-1">Your Answer</span>
+                    <AccordionContent className="text-wrap pb-4 space-y-3">
+                       <div className="text-wrap grid gap-2">
+                          <div className="text-wrap p-3 bg-muted/50 rounded-md border border-border">
+                             <span className="text-xs text-wrap font-bold text-muted-foreground uppercase block mb-1">Your Answer</span>
                              <p>{userAnswer}</p>
                           </div>
                           {config.questionType === 'mcq' && !isCorrect && (
-                             <div className="p-3 bg-green-50 dark:bg-green-900/10 rounded-md border border-green-200 dark:border-green-800">
-                                <span className="text-xs font-bold text-green-700 dark:text-green-400 uppercase block mb-1">Correct Answer</span>
-                                <p className="text-green-800 dark:text-green-300">{q.correctAnswer}</p>
+                             <div className="text-wrap p-3 bg-green-50 dark:bg-green-900/10 rounded-md border border-green-200 dark:border-green-800">
+                                <span className="text-xs text-wrap font-bold text-green-700 dark:text-green-400 uppercase block mb-1">Correct Answer</span>
+                                <p className="text-wrap text-green-800 dark:text-green-300">{q.correctAnswer}</p>
                              </div>
                           )}
                        </div>
