@@ -12,7 +12,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Progress } from "@/components/ui/progress";
 import { Rocket, Wand2, Sparkles, Loader2, Bot, CheckCircle, XCircle, ChevronRight, Repeat, FileText, Check } from 'lucide-react';
 import { Header } from '@/components/header';
-
+import { Badge } from '@/components/ui/badge';
 const testTopics = [
   { value: "Main Idea and Key Details", label: "Main Idea & Key Details" },
   { value: "Making Inferences", label: "Making Inferences" },
