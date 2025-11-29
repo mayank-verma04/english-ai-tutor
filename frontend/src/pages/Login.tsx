@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { BookOpen, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { ModeToggle } from "@/components/mode-toggle";
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -48,25 +49,29 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-soft flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4 shadow-glow">
+    <div className="min-h-screen bg-gradient-soft flex flex-col items-center justify-center p-4 transition-colors duration-300">
+      <div className="absolute top-4 right-4">
+        <ModeToggle />
+      </div>
+      
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center animate-fade-in space-y-2">
+          <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow mb-6 transform hover:scale-105 transition-transform duration-300">
             <BookOpen className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">
             English Tutor AI
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Welcome back to your learning journey
+          <p className="text-muted-foreground text-lg">
+            Master English with AI guidance
           </p>
         </div>
 
-        <Card className="shadow-medium border-0 animate-scale-in">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Sign In</CardTitle>
+        <Card className="shadow-strong border-border/40 backdrop-blur-sm bg-card/90 animate-scale-in">
+          <CardHeader className="text-center space-y-1">
+            <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Sign in to continue your progress
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -81,7 +86,7 @@ const Login = () => {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-background/50 border-input focus:ring-primary/20"
                     required
                   />
                 </div>
@@ -97,19 +102,20 @@ const Login = () => {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 bg-background/50 border-input focus:ring-primary/20"
                     required
                   />
                   <Button
                     type="button"
                     variant="ghost"
-                    className="absolute right-3 top-3 h-4 w-4 text-muted-foreground"
+                    size="icon"
+                    className="absolute right-1 top-1 h-8 w-8 text-muted-foreground hover:text-foreground"
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
@@ -117,7 +123,7 @@ const Login = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                className="w-full bg-gradient-primary hover:opacity-90 transition-opacity shadow-md"
                 disabled={isLoading}
               >
                 {isLoading ? 'Signing in...' : 'Sign In'}
@@ -129,9 +135,9 @@ const Login = () => {
                 Don't have an account?{' '}
                 <Link
                   to="/register"
-                  className="text-primary hover:text-primary-light font-medium transition-colors"
+                  className="text-primary hover:text-primary-light font-semibold hover:underline underline-offset-4 transition-all"
                 >
-                  Sign up
+                  Create account
                 </Link>
               </p>
             </div>

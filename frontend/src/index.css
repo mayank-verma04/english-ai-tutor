@@ -47,36 +47,32 @@
     --intermediate: 35 85% 55%;
     --advanced: 260 85% 45%;
     
-    /* Comprehension Module Colors */
+    /* Module Colors */
     --comprehension: 200 85% 45%;
     --comprehension-light: 200 60% 85%;
     --comprehension-soft: 200 40% 95%;
     
-    /* Composition Module Colors */
     --composition: 280 85% 45%;
     --composition-light: 280 60% 85%;
     --composition-soft: 280 40% 95%;
     
-    /* Muted & Text Colors */
+    /* UI Element Colors */
     --muted: 240 15% 94%;
     --muted-foreground: 220 15% 45%;
     --muted-hover: 240 20% 90%;
     
-    /* Accent Colors */
     --accent: 240 15% 94%;
     --accent-foreground: 220 20% 25%;
     --accent-hover: 240 20% 88%;
     
-    /* Semantic Colors */
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    /* Border & Input Colors */
     --border: 240 15% 88%;
     --input: 240 15% 92%;
     --ring: 220 85% 35%;
     
-    /* Gradients */
+    /* Gradients - Light Mode */
     --gradient-primary: linear-gradient(135deg, hsl(220, 85%, 35%), hsl(220, 85%, 45%));
     --gradient-success: linear-gradient(135deg, hsl(145, 85%, 35%), hsl(145, 60%, 45%));
     --gradient-comprehension: linear-gradient(135deg, hsl(200, 85%, 45%), hsl(200, 70%, 55%));
@@ -89,42 +85,36 @@
     --shadow-strong: 0 8px 30px -8px hsl(220, 20%, 15%, 0.15);
     --shadow-glow: 0 0 20px hsl(220, 85%, 35%, 0.15);
     
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    
-    /* Border Radius */
-    --radius: 0.75rem;
-
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Deep Educational Dark Theme (Slate/Indigo base, not pure black) */
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 224 71% 6%;
     --card-foreground: 210 40% 98%;
+    --card-hover: 224 71% 8%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    /* Brighter primary for contrast on dark bg */
+    --primary: 217 91% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-light: 217 91% 70%;
+    --primary-glow: 217 91% 60%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -134,14 +124,31 @@
 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+    --accent-hover: 217.2 32.6% 22%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
+    --ring: 224 76% 48%;
+
+    /* Gradients - Dark Mode (Critical for visibility) */
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(217, 91%, 50%));
+    --gradient-success: linear-gradient(135deg, hsl(145, 60%, 45%), hsl(145, 85%, 35%));
+    --gradient-comprehension: linear-gradient(135deg, hsl(200, 85%, 45%), hsl(200, 70%, 55%));
+    --gradient-composition: linear-gradient(135deg, hsl(280, 85%, 45%), hsl(280, 70%, 55%));
+    /* The Fix: A dark subtle gradient instead of the light one */
+    --gradient-soft: linear-gradient(180deg, hsl(224, 71%, 4%), hsl(224, 71%, 8%));
+
+    /* Shadows - Adjusted for dark mode to use light glow */
+    --shadow-soft: 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+    --shadow-medium: 0 4px 20px -4px rgba(0, 0, 0, 0.5);
+    --shadow-strong: 0 8px 30px -8px rgba(0, 0, 0, 0.7);
+    --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
+
+    /* Sidebar */
+    --sidebar-background: 224 71% 5%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;

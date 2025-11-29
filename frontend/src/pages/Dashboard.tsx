@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ModeToggle } from "@/components/mode-toggle"; // Ensure this is imported
 
 import { 
   BookOpen, 
@@ -11,7 +12,6 @@ import {
   Flame, 
   Star,
   ChevronRight,
-  Award,
   Target,
   Brain,
   Zap
@@ -53,16 +53,9 @@ const Dashboard = () => {
   ];
 
   const stats = [
-    { label: 'Current Streak', value: user?.streak.count || 0, icon: Flame, color: 'text-warning' },
-    { label: 'Total Points', value: user?.points || 0, icon: Star, color: 'text-success' },
-    { label: 'Rank', value: user?.rank ? `#${user.rank}` : '-', icon: Trophy, color: 'text-primary' },
-  ];
-
-  const achievements = [
-    { title: 'First Steps', description: 'Complete your first lesson', earned: true },
-    { title: 'Vocabulary Master', description: 'Learn 50 new words', earned: true },
-    { title: 'Writing Wizard', description: 'Submit 10 compositions', earned: false },
-    { title: 'Streak Champion', description: 'Maintain a 7-day streak', earned: user?.streak.count >= 7 },
+    { label: 'Current Streak', value: user?.streak.count || 0, icon: Flame, color: 'text-orange-500 dark:text-orange-400' },
+    { label: 'Total Points', value: user?.points || 0, icon: Star, color: 'text-green-600 dark:text-green-400' },
+    { label: 'Rank', value: user?.rank ? `#${user.rank}` : '-', icon: Trophy, color: 'text-blue-600 dark:text-blue-400' },
   ];
 
   const handleViewLeaderboard = () => {
@@ -70,23 +63,24 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-soft">
-      {/* Header */}
-      <header className="bg-white shadow-soft border-b">
+    <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
+      {/* Header - Fixed bg-white issue */}
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-md">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">English Tutor AI</h1>
+                <h1 className="text-xl font-bold text-foreground tracking-tight">English Tutor AI</h1>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              {/* <span className="text-sm text-muted-foreground">Welcome back, {user?.name}!</span> */}
-              <Button variant="outline" onClick={logout} className="text-sm hover:bg-red-100 hover:border-red-200 hover:text-black transition-all duration-200">
+               {/* Mode Toggle Positioned Here */}
+              <ModeToggle />
+              <Button variant="outline" onClick={logout} className="text-sm hover:bg-destructive/10 hover:text-destructive transition-colors">
                 Logout
               </Button>
             </div>
@@ -94,41 +88,39 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
         
-        {/* STATS OVERVIEW WITH MODERN HOVER EFFECT */}
+        {/* STATS OVERVIEW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card 
               key={stat.label} 
               className={`
-                shadow-soft border-0 
+                shadow-soft border-border/50
                 relative overflow-hidden 
-                transform transition-all duration-300 ease-in-out // Enables smooth animation
-                hover:scale-[1.03] hover:shadow-xl // The "Lift" effect
-                cursor-default group // 'group' enables animated child elements
-                animate-fade-in-delay-${index * 100}
+                transform transition-all duration-300 ease-in-out
+                hover:scale-[1.03] hover:shadow-xl hover:border-primary/20
+                cursor-default group
+                bg-card/50 backdrop-blur-sm
               `}
+              style={{ animationDelay: `${index * 100}ms` }}
             >
-              {/* The Animated Bottom Border/Glow Bar */}
               <div 
                 className={`
                   absolute inset-x-0 bottom-0 h-1 
-                  ${stat.color.replace('text-', 'bg-')} // Converts text-warning to bg-warning, etc.
+                  ${stat.color.replace('text-', 'bg-')}
                   transform translate-y-full transition-transform duration-300 ease-out 
-                  group-hover:translate-y-0 // Slides the bar up on hover
+                  group-hover:translate-y-0
                 `}
               ></div>
               
               <CardContent className="p-6">
-                <div className="flex items-center space-x-3">
-                  {/* Icon Area: Updated padding and group-hover effect */}
-                  <div className={`p-3 rounded-xl bg-muted transition-colors duration-300 group-hover:bg-gray-100 ${stat.color}`}>
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 rounded-xl bg-muted/50 transition-colors duration-300 group-hover:bg-accent ${stat.color}`}>
                     <stat.icon className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                    {/* Value text: Larger and bolder */}
                     <p className="text-3xl font-extrabold text-foreground transition-all duration-300 ease-out">
                       {stat.value}
                     </p>
@@ -139,12 +131,10 @@ const Dashboard = () => {
           ))}
         </div>
         
-        {/* ------------------------------------------------------------------- */}
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Learning Modules */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center space-x-2 mb-6">
+            <div className="flex items-center space-x-2 mb-2">
               <Target className="w-6 h-6 text-primary" />
               <h2 className="text-2xl font-bold text-foreground">Learning Modules</h2>
             </div>
@@ -152,25 +142,25 @@ const Dashboard = () => {
             {modules.map((module, moduleIndex) => (
               <Card 
                 key={module.id} 
-                className={`shadow-medium border-0 animate-fade-in-delay-${moduleIndex * 100} cursor-pointer hover:shadow-glow transition-all duration-300 hover-scale`}
+                className="shadow-medium border-border/50 cursor-pointer hover:shadow-glow hover:border-primary/30 transition-all duration-300 hover:translate-x-1 group bg-card"
                 onClick={() => handleModuleClick(module.id)}
               >
                 <CardHeader>
                   <div className="flex items-center space-x-4">
-                    <div className={`w-14 h-14 ${module.gradient} rounded-xl flex items-center justify-center shadow-glow`}>
+                    <div className={`w-14 h-14 ${module.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                       <module.icon className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className='pb-2'>{module.title}</CardTitle>
-                      <CardDescription className="mt-1">{module.description}</CardDescription>
+                      <CardTitle className='pb-2 text-xl'>{module.title}</CardTitle>
+                      <CardDescription className="mt-1 text-base">{module.description}</CardDescription>
                     </div>
-                    <ChevronRight className="w-6 h-6 text-muted-foreground" />
+                    <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {module.topics.map((topic) => (
-                      <Badge key={topic} variant="outline" className="text-xs">
+                      <Badge key={topic} variant="secondary" className="text-xs font-normal">
                         {topic}
                       </Badge>
                     ))}
@@ -182,76 +172,71 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Leaderboard Card */}
-              <Card className="mt-16">
+              {/* Leaderboard Card */}
+              <Card className="mt-14 border-border/50 shadow-medium hover:shadow-lg transition-all">
                 <CardHeader>
                   <div className="flex items-start gap-x-4">
-                    <div className="flex-shrink-0 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                      <Trophy className="w-6 h-6 text-slate-900 dark:text-slate-50" />
+                    <div className="flex-shrink-0 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                      <Trophy className="w-6 h-6 text-yellow-600 dark:text-yellow-500" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle>View Leaderboard</CardTitle>
+                      <CardTitle className="text-lg">Leaderboard</CardTitle>
                       <CardDescription className="mt-1">
-                        Check your rank and progress.
+                        Compete with others and earn your spot at the top!
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    See where you stand against other learners. Climb the ranks, earn new badges, and showcase your skills!
-                  </p>
+                   <div className="bg-muted/30 p-4 rounded-md text-sm text-muted-foreground">
+                      Current Rank: <span className="font-bold text-foreground">{user?.rank ? `#${user.rank}` : 'Unranked'}</span>
+                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="default" className="w-full" onClick={handleViewLeaderboard}>
-                    Go to Leaderboard
+                  <Button variant="outline" className="w-full hover:bg-accent" onClick={handleViewLeaderboard}>
+                    View Full Leaderboard
                   </Button>
                 </CardFooter>
               </Card>
           </div>
         </div>
+
         {/* On Demand Tests */}
-          <div className="space-y-6 mt-10">
-            <div className="flex items-center space-x-2 mb-6">
+          <div className="space-y-6 mt-12">
+            <div className="flex items-center space-x-2 mb-4">
               <Brain className="w-6 h-6 text-primary" />
               <h2 className="text-2xl font-bold text-foreground">On-Demand Tests</h2>
             </div>
-            <Card className="shadow-medium border-0 hover:shadow-glow transition-all duration-300 hover-scale">
+            <Card className="shadow-medium border-border/50 hover:shadow-glow transition-all duration-300 hover:border-primary/30 group bg-card">
               <CardHeader>
                 <div className="flex items-center space-x-4">
-                  <div className="w-14 h-14 bg-indigo-800 rounded-xl flex items-center justify-center shadow-glow">
+                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform duration-300">
                     <Zap className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <CardTitle className='pb-2'>Take a Test</CardTitle>
-                    <CardDescription className="mt-1">Assess your skills with quick quizzes and full-length tests.</CardDescription>
+                    <CardTitle className='pb-2 text-xl'>Skill Assessment</CardTitle>
+                    <CardDescription className="mt-1 text-base">Test your knowledge with AI-generated quizzes tailored to your level.</CardDescription>
                   </div>
-                  <ChevronRight className="w-6 h-6 text-muted-foreground" />
+                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <p>
-                  Choose from a variety of tests to evaluate your comprehension and composition skills. Get instant feedback and score reports.
-                </p>
-              </CardContent>
               <CardFooter>
-                <Button variant="default" className="w-full" onClick={() => navigate('/on-demand-test')}>
-                  Start a Test
+                <Button className="w-full bg-primary hover:bg-primary/90 text-white" onClick={() => navigate('/on-demand-test')}>
+                  Start Assessment
                 </Button>
               </CardFooter>
             </Card>
           </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white border-t mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} English Tutor AI. All rights reserved.</p>
-          <div className="flex space-x-4">
-            {/* Use Links */}
-            <Link to="#" className="text-sm text-muted-foreground hover:underline">Privacy Policy</Link>
-            <Link to="#" className="text-sm text-muted-foreground hover:underline">Terms of Service</Link>
-            <Link to="#" className="text-sm text-muted-foreground hover:underline">Contact Us</Link>
+      {/* Footer - Fixed bg-white issue */}
+      <footer className="bg-background border-t border-border mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} English Tutor AI. Excellence in Learning.</p>
+          <div className="flex space-x-6">
+            <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+            <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Support</Link>
           </div>
         </div>
       </footer>
