@@ -3,9 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, BookOpen, Volume2 } from 'lucide-react';
+import { ArrowRight, BookOpen, Volume2, Sparkles, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config/constants';
+import { Header } from '@/components/header';
 
 interface VocabularyWord {
   word: string;
@@ -41,23 +42,21 @@ const Vocabulary = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch vocabulary');
-      }
+      if (!response.ok) throw new Error('Failed to fetch vocabulary');
 
       const data = await response.json();
       if (data.vocabulary && data.vocabulary.length > 0) {
         setCurrentWord(data.vocabulary[0]);
       } else {
         toast({
-          title: 'No more vocabulary',
-          description: "You've completed all vocabulary for this level!",
+          title: 'Complete!',
+          description: "You've mastered all words for this level.",
         });
       }
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to load vocabulary. Please try again.',
+        description: 'Failed to load vocabulary.',
         variant: 'destructive',
       });
     } finally {
@@ -67,45 +66,27 @@ const Vocabulary = () => {
 
   const handleNext = async () => {
     if (!currentWord) return;
-
     try {
       setIsProgressing(true);
       const token = localStorage.getItem('token');
+      const progressResponse = await fetch(`${API_BASE_URL}/progress/vocabulary`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          module,
+          level,
+          lastSeenSequence: currentWord.sequence,
+        }),
+      });
 
-      // Save progress
-      const progressResponse = await fetch(
-        `${API_BASE_URL}/progress/vocabulary`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            module,
-            level,
-            lastSeenSequence: currentWord.sequence,
-          }),
-        }
-      );
-
-      if (!progressResponse.ok) {
-        throw new Error('Failed to save progress');
-      }
-
-      // Fetch next vocabulary
+      if (!progressResponse.ok) throw new Error('Failed to save progress');
       await fetchVocabulary();
-
-      toast({
-        title: 'Progress saved!',
-        description: 'Moving to next vocabulary word.',
-      });
+      toast({ title: 'Saved', description: 'Progress updated successfully.' });
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to save progress. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Could not save progress.', variant: 'destructive' });
     } finally {
       setIsProgressing(false);
     }
@@ -123,141 +104,102 @@ const Vocabulary = () => {
     fetchVocabulary();
   }, [module, level]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  if (!currentWord) {
-    return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-8 text-center">
-            <BookOpen className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">
-              No vocabulary available
-            </h2>
-            <p className="text-muted-foreground mb-4">
-              All vocabulary for this level has been completed!
-            </p>
-            <Button onClick={() => navigate('/dashboard')}>
-              Return to Dashboard
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="container mx-auto py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/comprehension')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Comprehension
-            </Button>
+    <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
+      <Header 
+        title="Vocabulary Practice" 
+        subtitle={`${module} • ${level}`}
+        icon={BookOpen}
+        iconColor="text-indigo-500"
+        iconBgColor="bg-indigo-100 dark:bg-indigo-900/30"
+        backTo="/comprehension"
+      />
 
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="capitalize">
-                {module}
-              </Badge>
-              <Badge variant="outline" className="capitalize">
-                {level}
-              </Badge>
-            </div>
+      <div className="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-64 space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+            <p className="text-muted-foreground animate-pulse">Loading words...</p>
           </div>
-
-          {/* Main Content */}
-          <Card className="mb-8">
-            <CardHeader className="text-center pb-4">
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <CardTitle className="text-3xl font-bold text-primary">
-                  {currentWord.word}
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => speakWord(currentWord.word)}
-                  className="p-2"
-                >
-                  <Volume2 className="w-5 h-5" />
-                </Button>
+        ) : !currentWord ? (
+          <Card className="text-center p-8 border-dashed border-2 bg-card/50">
+            <CardContent>
+              <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                <Sparkles className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Word #{currentWord.sequence}
-              </p>
-            </CardHeader>
+              <h2 className="text-2xl font-bold mb-2">All Caught Up!</h2>
+              <p className="text-muted-foreground mb-6">You have completed the vocabulary for this level.</p>
+              <Button onClick={() => navigate('/dashboard')} variant="default">Return to Dashboard</Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-8">
+            {/* Flashcard */}
+            <Card className="overflow-hidden border-border/60 shadow-strong bg-card/80 backdrop-blur-md">
+              <div className="h-2 bg-gradient-primary w-full" />
+              <CardHeader className="text-center pb-2 pt-8">
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <div className="relative group cursor-pointer" onClick={() => speakWord(currentWord.word)}>
+                    <h1 className="text-5xl font-extrabold tracking-tight text-foreground transition-transform group-hover:scale-105">
+                      {currentWord.word}
+                    </h1>
+                    <div className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Volume2 className="w-6 h-6 text-primary" />
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="px-3 py-1 text-sm bg-background/50">
+                    Word #{currentWord.sequence}
+                  </Badge>
+                </div>
+              </CardHeader>
 
-            <CardContent className="space-y-6">
-              {/* Meanings */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3 text-secondary-foreground">
-                  Meanings
-                </h3>
-                <div className="space-y-3">
+              <CardContent className="space-y-8 p-6 md:p-8">
+                {/* Meanings */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2">Definitions</h3>
                   {currentWord.meanings.map((meaning, index) => (
-                    <div key={index} className="flex gap-3">
-                      <Badge variant="outline" className="shrink-0">
+                    <div key={index} className="flex gap-4 p-4 rounded-xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors">
+                      <Badge className="h-fit shrink-0 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20">
                         {meaning.partOfSpeech}
                       </Badge>
-                      <p className="text-foreground">{meaning.definition}</p>
+                      <p className="text-lg leading-relaxed text-foreground/90">{meaning.definition}</p>
                     </div>
                   ))}
                 </div>
-              </div>
 
-              {/* Examples */}
-              {currentWord.examples && currentWord.examples.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-secondary-foreground">
-                    Examples
-                  </h3>
-                  <div className="space-y-3">
-                    {currentWord.examples.map((example, index) => (
-                      <div
-                        key={index}
-                        className="bg-muted/50 p-4 rounded-lg border-l-4 border-primary"
-                      >
-                        <p className="text-foreground italic">"{example}"</p>
-                      </div>
-                    ))}
+                {/* Examples */}
+                {currentWord.examples && currentWord.examples.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2">Contextual Examples</h3>
+                    <div className="space-y-3">
+                      {currentWord.examples.map((example, index) => (
+                        <div key={index} className="pl-4 border-l-4 border-indigo-400 dark:border-indigo-600 py-1">
+                          <p className="text-lg italic text-muted-foreground">"{example}"</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
 
-          {/* Navigation */}
-          <div className="flex justify-center">
-            <Button
-              onClick={handleNext}
-              disabled={isProgressing}
-              className="flex items-center gap-2 px-8"
-            >
-              {isProgressing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  Saving Progress...
-                </>
-              ) : (
-                <>
-                  Next Word
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </Button>
+            {/* Actions */}
+            <div className="flex justify-center pt-4">
+              <Button
+                size="lg"
+                onClick={handleNext}
+                disabled={isProgressing}
+                className="w-full md:w-auto min-w-[200px] shadow-lg hover:shadow-primary/25 transition-all text-base h-12 gap-2"
+              >
+                {isProgressing ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>Next Word <ArrowRight className="w-5 h-5" /></>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

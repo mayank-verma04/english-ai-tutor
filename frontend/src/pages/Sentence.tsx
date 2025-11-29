@@ -3,9 +3,11 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, FileText, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, FileText, Eye, EyeOff, CheckCircle2, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config/constants';
+import { Header } from '@/components/header';
+import { Progress } from '@/components/ui/progress';
 
 interface SentenceData {
   sentence: string;
@@ -37,9 +39,7 @@ const Sentence = () => {
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch sentences');
-      }
+      if (!response.ok) throw new Error('Failed to fetch sentences');
 
       const data = await response.json();
       if (data.sentences && data.sentences.length > 0) {
@@ -47,17 +47,10 @@ const Sentence = () => {
         setCurrentIndex(0);
         setShowAnswer(false);
       } else {
-        toast({
-          title: "No more sentences",
-          description: "You've completed all sentences for this level!",
-        });
+        toast({ title: "Complete", description: "You've completed all sentences for this level!" });
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load sentences. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to load sentences.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -70,43 +63,23 @@ const Sentence = () => {
     try {
       setIsProgressing(true);
       const token = localStorage.getItem('token');
-      
-      // Save progress
       const progressResponse = await fetch(`${API_BASE_URL}/progress/sentence`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          module,
-          level,
-          lastSeenSequence: currentSentence.sequence,
-        }),
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ module, level, lastSeenSequence: currentSentence.sequence }),
       });
 
-      if (!progressResponse.ok) {
-        throw new Error('Failed to save progress');
-      }
+      if (!progressResponse.ok) throw new Error('Failed to save progress');
 
-      // Move to next sentence or fetch new batch
       if (currentIndex + 1 < sentences.length) {
         setCurrentIndex(currentIndex + 1);
         setShowAnswer(false);
       } else {
         await fetchSentences();
       }
-      
-      toast({
-        title: "Progress saved!",
-        description: "Moving to next sentence.",
-      });
+      toast({ title: "Saved", description: "Progress saved successfully." });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save progress. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Could not save progress.", variant: "destructive" });
     } finally {
       setIsProgressing(false);
     }
@@ -116,166 +89,113 @@ const Sentence = () => {
     fetchSentences();
   }, [module, level]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
-
   const currentSentence = sentences[currentIndex];
-
-  if (!currentSentence) {
-    return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-8 text-center">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">No sentences available</h2>
-            <p className="text-muted-foreground mb-4">
-              All sentences for this level have been completed!
-            </p>
-            <Button onClick={() => navigate('/dashboard')}>
-              Return to Dashboard
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const progressPercentage = sentences.length > 0 ? ((currentIndex + 1) / sentences.length) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="container mx-auto py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/comprehension')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Comprehension
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="capitalize">
-                {module}
-              </Badge>
-              <Badge variant="outline" className="capitalize">
-                {level}
-              </Badge>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
+      <Header 
+        title="Sentence Practice" 
+        subtitle={`${level.charAt(0).toUpperCase() + level.slice(1)} Level`}
+        icon={FileText}
+        iconColor="text-cyan-500"
+        iconBgColor="bg-cyan-100 dark:bg-cyan-900/30"
+        backTo="/comprehension"
+      />
 
-          {/* Progress Indicator */}
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-muted-foreground">
-                Sentence {currentIndex + 1} of {sentences.length}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                Sequence #{currentSentence.sequence}
-              </span>
-            </div>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div 
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${((currentIndex + 1) / sentences.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-center text-xl">
-                Sentence Practice
-              </CardTitle>
-            </CardHeader>
-            
-            <CardContent className="space-y-6">
-              {/* Sentence */}
-              <div className="text-center">
-                <div className="bg-muted/50 p-6 rounded-lg border-2 border-dashed border-muted-foreground/20">
-                  <p className="text-lg leading-relaxed text-foreground">
-                    {currentSentence.sentence}
-                  </p>
-                </div>
-              </div>
-
-              {/* Grammar Info */}
-              {currentSentence.grammar && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-secondary-foreground">
-                    Grammar Focus
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">
-                      {currentSentence.grammar}
-                    </Badge>
-                  </div>
-                </div>
-              )}
-
-              {/* Answer Section */}
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-secondary-foreground">
-                    Answer/Explanation
-                  </h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAnswer(!showAnswer)}
-                    className="flex items-center gap-2"
-                  >
-                    {showAnswer ? (
-                      <>
-                        <EyeOff className="w-4 h-4" />
-                        Hide Answer
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-4 h-4" />
-                        Show Answer
-                      </>
-                    )}
-                  </Button>
-                </div>
-                
-                {showAnswer && (
-                  <div className="bg-accent/10 p-4 rounded-lg border border-accent/20">
-                    <p className="text-accent-foreground">{currentSentence.answer}</p>
-                  </div>
-                )}
-              </div>
+      <div className="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
+        {isLoading ? (
+          <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent"></div></div>
+        ) : !currentSentence ? (
+          <Card className="text-center p-8 border-dashed bg-card/50">
+            <CardContent>
+              <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500" />
+              <h2 className="text-xl font-bold">All Caught Up!</h2>
+              <p className="text-muted-foreground mt-2 mb-6">You have completed all sentences for this level.</p>
+              <Button onClick={() => navigate('/dashboard')}>Return to Dashboard</Button>
             </CardContent>
           </Card>
+        ) : (
+          <div className="space-y-6">
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm font-medium text-muted-foreground">
+                <span>Progress</span>
+                <span>{currentIndex + 1} / {sentences.length}</span>
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
+            </div>
 
-          {/* Navigation */}
-          <div className="flex justify-center">
-            <Button
-              onClick={handleNext}
-              disabled={isProgressing}
-              className="flex items-center gap-2 px-8"
-            >
-              {isProgressing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  Saving Progress...
-                </>
-              ) : (
-                <>
-                  Next Sentence
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </Button>
+            <Card className="shadow-strong border-border/60 bg-card/80 backdrop-blur-md overflow-hidden">
+              <div className="h-1 bg-gradient-to-r from-cyan-500 to-blue-500" />
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="text-lg font-medium text-muted-foreground uppercase tracking-widest">
+                  Exercise #{currentSentence.sequence}
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent className="space-y-8 p-6 md:p-10">
+                {/* Sentence Display */}
+                <div className="bg-background/50 p-8 rounded-xl border border-border shadow-inner text-center">
+                   <p className="text-2xl md:text-3xl font-serif leading-relaxed text-foreground">
+                     {currentSentence.sentence}
+                   </p>
+                </div>
+
+                {/* Grammar Tags */}
+                {currentSentence.grammar && (
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {Array.isArray(currentSentence.grammar) ? currentSentence.grammar.map((g, i) => (
+                      <Badge key={i} variant="secondary" className="px-3 py-1 text-sm bg-cyan-100/50 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800">
+                        {g}
+                      </Badge>
+                    )) : (
+                      <Badge variant="secondary">{currentSentence.grammar}</Badge>
+                    )}
+                  </div>
+                )}
+
+                {/* Interactive Answer Section */}
+                <div className="space-y-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowAnswer(!showAnswer)}
+                    className="w-full h-12 border border-input hover:bg-accent hover:text-accent-foreground transition-all group"
+                  >
+                    {showAnswer ? (
+                      <><EyeOff className="w-4 h-4 mr-2" /> Hide Explanation</>
+                    ) : (
+                      <><Eye className="w-4 h-4 mr-2" /> Reveal Explanation</>
+                    )}
+                  </Button>
+                  
+                  {showAnswer && (
+                    <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-100 dark:border-green-800 animate-accordion-down">
+                      <p className="text-lg font-medium text-green-800 dark:text-green-300 text-center">
+                        {currentSentence.answer}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center pt-2">
+              <Button
+                onClick={handleNext}
+                disabled={isProgressing}
+                size="lg"
+                className="w-full md:w-auto min-w-[200px] shadow-lg"
+              >
+                {isProgressing ? (
+                  <RefreshCw className="w-5 h-5 animate-spin mr-2" />
+                ) : (
+                  <>Next Sentence <ArrowRight className="w-5 h-5 ml-2" /></>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

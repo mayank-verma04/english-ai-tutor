@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, BookOpen, ChevronRight } from 'lucide-react';
+import { BookOpen, ChevronRight, BookOpenText } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config/constants';
+import { Header } from '@/components/header';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface PassageItem {
   sequence: number;
@@ -32,18 +34,11 @@ const PassageList = () => {
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch passages');
-      }
-
+      if (!response.ok) throw new Error('Failed to fetch passages');
       const data = await response.json();
       setPassages(data.passages || []);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load passages. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to load passages.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -57,93 +52,65 @@ const PassageList = () => {
     fetchPassages();
   }, [module, level]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="container mx-auto py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/comprehension')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Comprehension
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="capitalize">
-                {module}
-              </Badge>
-              <Badge variant="outline" className="capitalize">
-                {level}
-              </Badge>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
+      <Header 
+        title="Reading Passages" 
+        subtitle={`Select a story to begin • ${level}`}
+        icon={BookOpenText}
+        iconColor="text-pink-600 dark:text-pink-400"
+        iconBgColor="bg-pink-100 dark:bg-pink-900/30"
+        backTo="/comprehension"
+      />
 
-          {/* Title */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">Reading Passages</h1>
-            <p className="text-muted-foreground">
-              Choose a passage to practice your comprehension skills
-            </p>
+      <div className="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
+        {isLoading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+             {[...Array(6)].map((_, i) => (
+               <Card key={i} className="h-32 bg-card/50"><CardContent className="p-6"><Skeleton className="h-4 w-1/2 mb-4"/><Skeleton className="h-4 w-full"/></CardContent></Card>
+             ))}
           </div>
-
-          {/* Passages Grid */}
-          {passages.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {passages.map((passage, index) => (
-                <Card 
-                  key={passage.sequence}
-                  className="group hover:shadow-lg transition-all duration-200 cursor-pointer hover-scale"
-                  onClick={() => handlePassageClick(passage.sequence)}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <BookOpen className="w-8 h-8 text-primary shrink-0" />
-                      <Badge variant="outline">#{passage.sequence}</Badge>
+        ) : passages.length > 0 ? (
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {passages.map((passage, index) => (
+              <Card 
+                key={passage.sequence}
+                className="group relative overflow-hidden cursor-pointer hover:shadow-xl hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 bg-card/80 backdrop-blur-sm"
+                onClick={() => handlePassageClick(passage.sequence)}
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-primary/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <CardContent className="p-6 flex flex-col h-full justify-between">
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        <BookOpen className="w-6 h-6" />
+                      </div>
+                      <Badge variant="outline" className="font-mono text-xs">#{passage.sequence}</Badge>
                     </div>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <CardTitle className="text-lg mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                      {passage.title || `Passage ${passage.sequence}`}
-                    </CardTitle>
                     
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        Click to read
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {passage.title || `Untitled Passage ${passage.sequence}`}
+                    </h3>
+                  </div>
+                  
+                  <div className="flex items-center text-sm text-muted-foreground font-medium mt-4 group-hover:translate-x-1 transition-transform">
+                    Read Passage <ChevronRight className="w-4 h-4 ml-1" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="w-10 h-10 text-muted-foreground/50" />
             </div>
-          ) : (
-            <Card className="max-w-md mx-auto">
-              <CardContent className="p-8 text-center">
-                <BookOpen className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                <h2 className="text-xl font-semibold mb-2">No passages available</h2>
-                <p className="text-muted-foreground mb-4">
-                  No passages found for this level. Check back later!
-                </p>
-                <Button onClick={() => navigate('/dashboard')}>
-                  Return to Dashboard
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+            <h2 className="text-xl font-semibold">No passages found</h2>
+            <p className="text-muted-foreground mt-2">Check back later for new content.</p>
+          </div>
+        )}
       </div>
     </div>
   );

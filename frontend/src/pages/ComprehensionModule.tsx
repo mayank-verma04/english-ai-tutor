@@ -7,13 +7,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, ArrowLeft, ChevronRight, Star } from 'lucide-react';
+import { BookOpen, ChevronRight, Star, GraduationCap } from 'lucide-react';
+import { Header } from '@/components/header';
 
 const ComprehensionModule = () => {
   const navigate = useNavigate();
 
-  const handleTopicClick = (levelId, topic) => {
-    const topicRoutes = {
+  const handleTopicClick = (levelId: string, topic: string) => {
+    const topicRoutes: Record<string, string> = {
       Vocabulary: '/vocabulary',
       Sentences: '/sentence',
       Passages: '/passages',
@@ -31,103 +32,101 @@ const ComprehensionModule = () => {
       name: 'Beginner',
       description: 'Start with basic vocabulary and simple passages',
       topics: ['Vocabulary', 'Sentences', 'Passages'],
-      color: 'text-beginner',
-      bgColor: 'bg-success-soft',
+      color: 'text-green-600 dark:text-green-400',
+      iconColor: 'text-green-600 dark:text-green-400',
+      iconBg: 'bg-green-100 dark:bg-green-900/30',
+      borderColor: 'hover:border-green-500/50',
     },
     {
       id: 'intermediate',
       name: 'Intermediate',
       description: 'Build comprehension skills with moderate complexity',
       topics: ['Vocabulary', 'Sentences', 'Passages'],
-      color: 'text-intermediate',
-      bgColor: 'bg-warning-soft',
+      color: 'text-yellow-600 dark:text-yellow-400',
+      iconColor: 'text-yellow-600 dark:text-yellow-400',
+      iconBg: 'bg-yellow-100 dark:bg-yellow-900/30',
+      borderColor: 'hover:border-yellow-500/50',
     },
     {
       id: 'advanced',
       name: 'Advanced',
       description: 'Master complex texts and advanced vocabulary',
       topics: ['Vocabulary', 'Sentences', 'Passages'],
-      color: 'text-advanced',
-      bgColor: 'bg-muted',
+      color: 'text-blue-600 dark:text-blue-400',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      iconBg: 'bg-blue-100 dark:bg-blue-900/30',
+      borderColor: 'hover:border-blue-500/50',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-soft">
-      {/* Header */}
-      <header className="bg-white shadow-soft sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                onClick={() => navigate('/dashboard')}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Dashboard
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
+      <Header 
+        title="Comprehension Module" 
+        subtitle="Reading & Listening Skills"
+        icon={BookOpen}
+        iconColor="text-blue-600 dark:text-blue-400"
+        iconBgColor="bg-blue-100 dark:bg-blue-900/30"
+        backTo="/dashboard"
+      />
 
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-comprehension rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">
-                  Comprehension Module
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+        <div className="text-center mb-10 space-y-3">
+          <h2 className="text-3xl font-bold text-foreground tracking-tight">
             Reading Comprehension
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Master reading comprehension through vocabulary building, sentence
-            analysis, and passage understanding
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Master language interpretation through structured vocabulary building, 
+            sentence analysis, and passage understanding.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
+        <div className="grid gap-6">
           {levels.map((level, index) => (
             <Card
               key={level.id}
-              className={`shadow-medium border-0 animate-fade-in-delay-${
-                index * 100
-              } hover:shadow-lg transition-shadow duration-200`}
+              className={`
+                group border-border/60 shadow-sm hover:shadow-lg hover:shadow-primary/5 
+                transition-all duration-300 transform hover:-translate-y-1
+                bg-card/50 backdrop-blur-sm
+                ${level.borderColor}
+              `}
+              style={{ animationDelay: `${index * 150}ms` }}
             >
               <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <Star className={`${level.color}`} />
-                  <div className="flex-1">
-                    <CardTitle className="text-xl">
+                <div className="flex items-start sm:items-center gap-5">
+                  <div className={`p-3 rounded-xl ${level.iconBg} ${level.iconColor} shadow-inner`}>
+                    <Star className="w-6 h-6 fill-current" />
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <CardTitle className="text-xl flex items-center gap-2">
                       {level.name} Level
+                      {level.id === 'advanced' && <GraduationCap className="w-4 h-4 text-muted-foreground" />}
                     </CardTitle>
-                    <CardDescription className="mt-1">
+                    <CardDescription className="text-base font-medium">
                       {level.description}
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                {/* i want to add hover effect to the card */}
-                <div className="flex flex-wrap flex-col sm:flex-row gap-3">
+                <div className="flex flex-wrap gap-3 mt-2">
                   {level.topics.map((topic) => (
                     <Button
                       key={topic}
                       variant="outline"
-                      // i want to remove hover effect from the button
-                      className="text-sm transition-all duration-200 px-6 py-3"
+                      className="
+                        group/btn relative overflow-hidden
+                        border-input bg-background/50 hover:bg-accent hover:text-accent-foreground
+                        transition-all duration-300
+                        pl-5 pr-4 py-5 h-auto text-sm font-medium
+                      "
                       onClick={() => handleTopicClick(level.id, topic)}
                     >
-                      {topic}
-                      <ChevronRight className="w-4 h-4 ml-2" />
+                      <span className="relative z-10 flex items-center">
+                        {topic}
+                        <ChevronRight className="w-4 h-4 ml-2 opacity-0 -translate-x-2 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all duration-300" />
+                      </span>
                     </Button>
                   ))}
                 </div>

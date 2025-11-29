@@ -4,8 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/theme-provider"; // Ensure this is imported if used
 import ProtectedRoute from "@/components/ProtectedRoute";
+
+// Pages
+import Index from "./pages/Index"; // Import the new Home Page
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -36,132 +39,71 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    {/* Theme Provider wrapping the app */}
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class">
-    <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/leaderboard" element={
-              <ProtectedRoute>
-                <Leaderboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/on-demand-test" element={
-              <ProtectedRoute>
-                <OnDemandTestPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/comprehension" element={
-              <ProtectedRoute>
-                <ComprehensionModule />
-              </ProtectedRoute>
-            } />
-            <Route path="/composition" element={
-              <ProtectedRoute>
-                <CompositionModule />
-              </ProtectedRoute>
-            } />
-            <Route path="/vocabulary" element={
-              <ProtectedRoute>
-                <Vocabulary />
-              </ProtectedRoute>
-            } />
-            <Route path="/sentence" element={
-              <ProtectedRoute>
-                <Sentence />
-              </ProtectedRoute>
-            } />
-            <Route path="/passages" element={
-              <ProtectedRoute>
-                <PassageList />
-              </ProtectedRoute>
-            } />
-            <Route path="/passage" element={
-              <ProtectedRoute>
-                <Passage />
-              </ProtectedRoute>
-            } />
-            <Route path="/sentence-formation" element={
-              <ProtectedRoute>
-                <SentenceFormation />
-              </ProtectedRoute>
-            } />
-            <Route path="/short-paragraphs" element={
-              <ProtectedRoute>
-                <ShortParagraphs />
-              </ProtectedRoute>
-            } />
-            <Route path="/short-paragraph" element={
-              <ProtectedRoute>
-                <ShortParagraph />
-              </ProtectedRoute>
-            } />
-            <Route path="/tone-practice" element={
-              <ProtectedRoute>
-                <TonePractice />
-              </ProtectedRoute>
-            } />
-            <Route path="/tone-practice-detail" element={
-              <ProtectedRoute>
-                <TonePracticeDetail />
-              </ProtectedRoute>
-            } />
-            <Route path="/letters" element={
-              <ProtectedRoute>
-                <Letters />
-              </ProtectedRoute>
-            } />
-            <Route path="/letter" element={
-              <ProtectedRoute>
-                <Letter />
-              </ProtectedRoute>
-            } />
-            <Route path="/essays" element={
-              <ProtectedRoute>
-                <Essays />
-              </ProtectedRoute>
-            } />
-            <Route path="/essay" element={
-              <ProtectedRoute>
-                <Essay />
-              </ProtectedRoute>
-            } />
-            <Route path="/reports" element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            } />
-            <Route path="/report" element={
-              <ProtectedRoute>
-                <Report />
-              </ProtectedRoute>
-            } />
-            <Route path="/persuasive-writing" element={
-              <ProtectedRoute>
-                <PersuasiveWriting />
-              </ProtectedRoute>
-            } />
-            <Route path="/persuasive-writing-detail" element={
-              <ProtectedRoute>
-                <PersuasiveWritingDetail />
-              </ProtectedRoute>
-            } />
-            <Route path="/" element={<Login />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              
+              {/* Protected Routes */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/leaderboard" element={
+                <ProtectedRoute>
+                  <Leaderboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/on-demand-test" element={
+                <ProtectedRoute>
+                  <OnDemandTestPage />
+                </ProtectedRoute>
+              } />
+              
+              {/* Module Routes */}
+              <Route path="/comprehension" element={<ProtectedRoute><ComprehensionModule /></ProtectedRoute>} />
+              <Route path="/composition" element={<ProtectedRoute><CompositionModule /></ProtectedRoute>} />
+              
+              {/* Lesson Routes */}
+              <Route path="/vocabulary" element={<ProtectedRoute><Vocabulary /></ProtectedRoute>} />
+              <Route path="/sentence" element={<ProtectedRoute><Sentence /></ProtectedRoute>} />
+              <Route path="/passages" element={<ProtectedRoute><PassageList /></ProtectedRoute>} />
+              <Route path="/passage" element={<ProtectedRoute><Passage /></ProtectedRoute>} />
+              
+              <Route path="/sentence-formation" element={<ProtectedRoute><SentenceFormation /></ProtectedRoute>} />
+              <Route path="/short-paragraphs" element={<ProtectedRoute><ShortParagraphs /></ProtectedRoute>} />
+              <Route path="/short-paragraph" element={<ProtectedRoute><ShortParagraph /></ProtectedRoute>} />
+              
+              <Route path="/tone-practice" element={<ProtectedRoute><TonePractice /></ProtectedRoute>} />
+              <Route path="/tone-practice-detail" element={<ProtectedRoute><TonePracticeDetail /></ProtectedRoute>} />
+              
+              <Route path="/letters" element={<ProtectedRoute><Letters /></ProtectedRoute>} />
+              <Route path="/letter" element={<ProtectedRoute><Letter /></ProtectedRoute>} />
+              
+              <Route path="/essays" element={<ProtectedRoute><Essays /></ProtectedRoute>} />
+              <Route path="/essay" element={<ProtectedRoute><Essay /></ProtectedRoute>} />
+              
+              <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+              <Route path="/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />
+              
+              <Route path="/persuasive-writing" element={<ProtectedRoute><PersuasiveWriting /></ProtectedRoute>} />
+              <Route path="/persuasive-writing-detail" element={<ProtectedRoute><PersuasiveWritingDetail /></ProtectedRoute>} />
+              
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

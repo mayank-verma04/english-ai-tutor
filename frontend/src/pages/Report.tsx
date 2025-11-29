@@ -2,26 +2,17 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Send, Award, TrendingUp, FileText } from 'lucide-react';
+import { Send, Award, TrendingUp, ClipboardList, BarChart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config/constants';
+import { Header } from '@/components/header';
 
-// Helper to format criteria names from snake_case to Title Case
-const formatCriterionName = (name) => {
-  return name
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+const formatCriterionName = (name: string) => {
+  return name.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
 const Report = () => {
@@ -33,255 +24,146 @@ const Report = () => {
   const level = searchParams.get('level') || 'advanced';
   const sequence = searchParams.get('sequence') || '1';
 
-  const [report, setReport] = useState(null);
+  const [report, setReport] = useState<any>(null);
   const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [evaluation, setEvaluation] = useState(null);
+  const [evaluation, setEvaluation] = useState<any>(null);
 
   useEffect(() => {
-    fetchReport();
-  }, [module, level, sequence]);
-
-  const fetchReport = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(
-        `${API_BASE_URL}/lessons/reports/one?module=${module}&level=${level}&sequence=${sequence}`,
-        {
+    const fetchReport = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/lessons/reports/one?module=${module}&level=${level}&sequence=${sequence}`, {
           headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.report && data.report.length > 0) {
+          setReport(data.report[0].content.reports);
         }
-      );
-      const data = await res.json();
-      if (data.report && data.report.length > 0) {
-        setReport(data.report[0].content.reports);
+      } catch (error) {
+        toast({ title: 'Error', description: 'Failed to load report', variant: 'destructive' });
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load report',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchReport();
+  }, [module, level, sequence, toast]);
 
   const handleSubmit = async () => {
-    if (!answer.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please write your report',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+    if (!answer.trim()) return;
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${API_BASE_URL}/composition/reports/submit`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          module,
-          level,
-          sequence: parseInt(sequence),
-          question: report.prompt,
-          answer,
-        }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ module, level, sequence: parseInt(sequence), question: report.prompt, answer }),
       });
       const data = await res.json();
       setEvaluation(data.evaluation);
-
-      toast({
-        title: 'Submitted!',
-        description: `You earned ${data.points.pointsAwarded} points!`,
-        className: 'bg-success-soft',
-      });
+      toast({ title: 'Submitted!', description: `You earned ${data.points.pointsAwarded} points!` });
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to submit answer',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to submit answer', variant: 'destructive' });
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-soft">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!report) {
-    return (
-      <div className="min-h-screen bg-gradient-soft flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Report not found</p>
-            <Button onClick={() => navigate('/reports')} className="mt-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to List
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-soft">
-      <header className="bg-white shadow-soft border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Button
-              variant="ghost"
-              onClick={() =>
-                navigate(`/reports?module=${module}&level=${level}`)
-              }
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              <Badge className="bg-muted">{level}</Badge>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
+      <Header 
+        title="Report Writing" 
+        subtitle={`Task #${sequence}`}
+        icon={ClipboardList}
+        iconColor="text-slate-600 dark:text-slate-400"
+        iconBgColor="bg-slate-100 dark:bg-slate-800"
+        backTo={`/reports?module=${module}&level=${level}`}
+      />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="shadow-medium">
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="secondary">#{report.sequence}</Badge>
-            </div>
-            <CardTitle className="text-2xl">Report Writing</CardTitle>
-            <CardDescription className="mt-2 text-base">
-              {report.prompt}
-            </CardDescription>
-            {report.focus && report.focus.length > 0 && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">Focus Areas:</p>
-                <div className="flex flex-wrap gap-2">
-                  {report.focus.map((item: string, idx: number) => (
-                    <Badge key={idx} variant="secondary">
-                      {item}
-                    </Badge>
-                  ))}
+      <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
+        {loading || !report ? (
+           <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+        ) : (
+          <div className="grid gap-6">
+            <Card className="shadow-medium border-border/50 bg-card/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                     <Badge variant="outline">Formal Report</Badge>
+                     {report.data && <Badge variant="secondary" className="flex gap-1 items-center"><BarChart className="w-3 h-3"/> Data Provided</Badge>}
+                  </div>
+                  <CardTitle className="text-xl">{report.title}</CardTitle>
+                  <CardDescription className="text-base text-foreground/90 mt-2 p-4 bg-muted/30 rounded-lg border border-border/50 font-medium">
+                    {report.prompt}
+                  </CardDescription>
+                  {report.data && (
+                    <div className="mt-2 p-4 bg-background border border-border rounded-md text-sm font-mono text-muted-foreground whitespace-pre-wrap">
+                      {report.data}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </CardHeader>
+              </CardHeader>
 
-          <CardContent className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Your Report
-              </label>
-              <Textarea
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Write your report here..."
-                rows={16}
-                disabled={!!evaluation}
-                className="resize-none"
-              />
-              <p className="text-xs text-muted-foreground mt-2">
-                Word count: {answer.trim().split(/\s+/).filter(Boolean).length}
-              </p>
-            </div>
+              <CardContent className="space-y-4">
+                <Textarea
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  placeholder="Title: ...&#10;Introduction: ...&#10;Findings: ...&#10;Conclusion: ..."
+                  rows={15}
+                  disabled={!!evaluation}
+                  className="resize-none text-base bg-background/50 focus:bg-background"
+                />
+                
+                {!evaluation && (
+                  <div className="flex justify-end">
+                    <Button onClick={handleSubmit} disabled={submitting || !answer.trim()} size="lg" className="min-w-[150px]">
+                      <Send className="w-4 h-4 mr-2" /> {submitting ? 'Analyzing...' : 'Submit Report'}
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-            {!evaluation ? (
-              <Button
-                onClick={handleSubmit}
-                disabled={submitting || !answer.trim()}
-                className="w-full"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                {submitting ? 'Submitting...' : 'Submit for Evaluation'}
-              </Button>
-            ) : (
-              <Card className="bg-gradient-soft border-0">
+            {evaluation && (
+              <Card className="shadow-strong border-slate-500/20 bg-slate-50/10 dark:bg-slate-900/10 animate-scale-in">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-primary" />
-                    Evaluation Results
+                  <CardTitle className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                    <Award className="w-6 h-6" /> Assessment
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-white rounded-lg">
-                      <p className="text-sm text-muted-foreground">Score</p>
-                      <p className="text-2xl font-bold text-primary">
-                        {evaluation.score}/{evaluation.maxScore}
-                      </p>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-card p-4 rounded-xl shadow-sm text-center border border-border/50">
+                      <span className="text-xs text-muted-foreground uppercase font-bold">Total Score</span>
+                      <div className="text-3xl font-bold text-primary mt-1">{evaluation.score}/{evaluation.maxScore}</div>
                     </div>
-                    <div className="text-center p-4 bg-white rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        Performance
-                      </p>
-                      <p className="text-2xl font-bold text-success">
-                        {Math.round(
-                          (evaluation.score / evaluation.maxScore) * 100
-                        )}
-                        %
-                      </p>
-                    </div>
+                    {Object.entries(evaluation.rubric).map(([criterion, score]: [string, any]) => (
+                      <div key={criterion} className="bg-card p-4 rounded-xl shadow-sm text-center border border-border/50">
+                        <span className="text-xs text-muted-foreground uppercase font-bold truncate block">{formatCriterionName(criterion)}</span>
+                        <div className="text-xl font-semibold mt-1">{score}/10</div>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* === DYNAMIC RUBRIC DISPLAY === */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {Object.entries(evaluation.rubric).map(
-                      ([criterion, score]) => (
-                        <div
-                          key={criterion}
-                          className="text-center p-3 bg-white rounded-lg"
-                        >
-                          <p className="text-xs text-muted-foreground capitalize">
-                            {formatCriterionName(criterion)}
-                          </p>
-                          <p className="text-lg font-semibold">{score}/10</p>
-                        </div>
-                      )
-                    )}
-                  </div>
-
-                  <div className="p-4 bg-white rounded-lg">
-                    <p className="text-sm font-medium flex items-center gap-2 mb-2">
-                      <TrendingUp className="w-4 h-4" />
-                      Feedback
-                    </p>
-                    <div className="prose prose-sm max-w-none text-muted-foreground text-base">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {evaluation.feedback}
-                      </ReactMarkdown>
+                  <div className="bg-card p-6 rounded-xl border border-border/50">
+                    <h3 className="flex items-center gap-2 font-semibold mb-3">
+                      <TrendingUp className="w-4 h-4" /> Feedback
+                    </h3>
+                    <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{evaluation.feedback}</ReactMarkdown>
                     </div>
                   </div>
 
-                  <Button
-                    onClick={() =>
-                      navigate(`/reports?module=${module}&level=${level}`)
-                    }
-                    className="w-full"
-                  >
-                    Back to List
+                  <Button onClick={() => navigate(`/reports?module=${module}&level=${level}`)} className="w-full" variant="secondary">
+                    Back to Reports
                   </Button>
                 </CardContent>
               </Card>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        )}
       </div>
     </div>
   );
