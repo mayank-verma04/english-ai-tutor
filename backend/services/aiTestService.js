@@ -79,7 +79,7 @@ exports.generateQuestionForTest = async (config) => {
     throw new Error('Unsupported question type.');
   }
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   const result = await model.generateContent(prompt);
   const jsonResponse = extractJson(result.response.text());
 
@@ -112,7 +112,7 @@ exports.evaluateAnswerForTest = async (question, answer, level) => {
     }
   `;
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   const result = await model.generateContent(prompt);
   const jsonResponse = extractJson(result.response.text());
 

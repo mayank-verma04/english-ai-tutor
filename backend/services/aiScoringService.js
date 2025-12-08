@@ -53,7 +53,7 @@ ${question}
   "feedback": "<Your detailed feedback here>"
 }
 `;
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   const result = await model.generateContent(prompt);
   const text = result.response.text();
 
@@ -66,6 +66,7 @@ ${question}
 
   let weightedScoreSum = 0;
   let totalWeight = 0;
+
 
   for (const criterion in rubric.scores) {
     if (evaluationCriteria.hasOwnProperty(criterion)) {
