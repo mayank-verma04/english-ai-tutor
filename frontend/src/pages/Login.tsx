@@ -10,35 +10,82 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter
+  CardFooter,
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { BookOpen, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
+
+// --- IMPORTS FOR GOOGLE & THEME ---
+import { GoogleLogin } from '@react-oauth/google';
+import { useTheme } from 'next-themes';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user } = useAuth();
+
+  // Auth Context
+  const { login, googleLogin, user } = useAuth();
+
+  // UI Hooks
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Theme Hook (to style the Google Button)
+  const { resolvedTheme } = useTheme();
+
+  // Redirect if already logged in
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }
 
+  // --- GOOGLE SUCCESS HANDLER ---
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setIsLoading(true);
+    try {
+      if (!credentialResponse.credential)
+        throw new Error('No credential received');
+
+      // Send token to backend via Context
+      await googleLogin(credentialResponse.credential);
+
+      toast({
+        title: 'Welcome!',
+        description: 'Successfully signed in with Google.',
+      });
+      navigate('/dashboard');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Login failed',
+        description: error.message || 'Google sign-in could not be completed.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    toast({
+      variant: 'destructive',
+      title: 'Login failed',
+      description: 'Google sign-in was unsuccessful. Please try again.',
+    });
+  };
+  // -----------------------------
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       await login(email, password);
       toast({
         title: 'Welcome back!',
         description: "You've successfully logged in.",
       });
+      navigate('/dashboard');
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -54,9 +101,9 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-soft transition-colors duration-300 flex flex-col">
       {/* Top Navigation Bar */}
       <div className="w-full max-w-7xl mx-auto p-4 flex justify-between items-center absolute top-0 left-0 right-0 z-10">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/')} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
           className="hover:bg-background/50 hover:text-primary transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
@@ -66,24 +113,31 @@ const Login = () => {
 
       <div className="flex-1 flex items-center justify-center p-4 pt-16">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
-          
-          {/* Logo & Header */}
+          {/* Logo Section */}
           <div className="text-center space-y-2">
             <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 transform hover:scale-105 transition-transform duration-300">
               <BookOpen className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome Back</h1>
-            <p className="text-muted-foreground">Sign in to continue your progress</p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Welcome Back
+            </h1>
+            <p className="text-muted-foreground">
+              Sign in to continue your progress
+            </p>
           </div>
 
+          {/* Login Card */}
           <Card className="shadow-strong border-border/50 bg-card/80 backdrop-blur-sm animate-scale-in">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-xl font-semibold text-center">Sign In</CardTitle>
+              <CardTitle className="text-xl font-semibold text-center">
+                Sign In
+              </CardTitle>
               <CardDescription className="text-center">
                 Enter your email and password below
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Standard Login Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -104,12 +158,14 @@ const Login = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
-                    <Link 
-                      to="#" 
+                    <Link
+                      to="#"
                       className="text-xs text-primary hover:text-primary-light hover:underline font-medium"
                       onClick={(e) => {
                         e.preventDefault();
-                        toast({ description: "Password reset feature coming soon!" });
+                        toast({
+                          description: 'Password reset feature coming soon!',
+                        });
                       }}
                     >
                       Forgot password?
@@ -150,6 +206,31 @@ const Login = () => {
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
+
+              {/* Google Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-muted-foreground/20" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              {/* Google Button */}
+              <div className="flex justify-center w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleFailure}
+                  // DYNAMIC THEME LOGIC:
+                  theme={resolvedTheme === 'dark' ? 'filled_black' : 'outline'}
+                  text="continue_with"
+                  width="100%"
+                  shape="pill"
+                />
+              </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4 border-t border-border/50 bg-muted/20 p-6">
               <div className="text-center text-sm text-muted-foreground">

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
+  googleId: { type: String},
   passwordHash: String,
   points: { type: Number, default: 0 },
   streak: {
