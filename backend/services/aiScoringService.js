@@ -3,17 +3,24 @@ const genAI = require('../config/gemini');
 const scoringConfig = require('../config/scoringConfig');
 
 function extractJson(text) {
-  const match = text.match(/```json\s*([\s\S]*?)\s*```/);
-  if (match && match[1]) {
+  const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  let jsonString = match ? match[1] : text;
+
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
     try {
-      return JSON.parse(match[1]);
-    } catch (e) {
-      console.error('Failed to parse extracted JSON:', e);
+      // Attempt to fix unescaped newlines and control characters within string literals
+      const fixedString = jsonString.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"/g, (m) => {
+        return m.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+      });
+      return JSON.parse(fixedString);
+    } catch (innerError) {
+      console.error('Failed to parse extracted JSON:', innerError);
+      console.error('Original Text:', text);
       return null;
     }
   }
-  console.error('No JSON block found in the response.');
-  return null;
 }
 
 exports.evaluateWithAI = async (module, step, level, question, answer) => {
@@ -30,7 +37,7 @@ exports.evaluateWithAI = async (module, step, level, question, answer) => {
   const criteriaList = Object.keys(evaluationCriteria).join(', ');
 
   const prompt = `
-You are a highly experienced English teacher providing feedback for a student at the "${level}" level. The student is completing a "${step}" exercise in a "${module}" module.
+You are a highly experienced English teacher providing feedback for a student at the "${level}" level. The student is completing a "${stp}" exercise in a "${module}" module.
 
 **The Question Was:**
 ${question}
@@ -42,7 +49,7 @@ ${question}
 1.  Carefully analyze the student's answer based on the following criteria: **${criteriaList}**.
 2.  For each criterion, provide a score from 0 to 10, where 0 is very poor and 10 is excellent.
 3.  Provide constructive, encouraging, and actionable feedback in simple language suitable for a "${level}" learner. Explain what they did well and give specific examples of how they can improve.
-4.  Return ONLY a single JSON object in a markdown code block. Do not add any text before or after the JSON block.
+4.  Return ONLY a single JSON object in a markdown code block. Do not add any text before or after the JSON block. Ensure all newlines inside string values are properly escaped as \\n.
 
 **JSON Output Format:**
 {
