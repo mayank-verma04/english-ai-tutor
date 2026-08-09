@@ -45,17 +45,32 @@ exports.updateProfile = async (req, res) => {
 
     // Update password
     if (newPassword) {
+      // Current password is ALWAYS required
       if (!currentPassword) {
         return res.status(400).json({ msg: 'Current password is required to set a new password' });
       }
-      // Google users with no passwordHash cannot verify old password the normal way
-      if (user.passwordHash) {
-        const valid = await bcrypt.compare(currentPassword, user.passwordHash);
-        if (!valid) return res.status(400).json({ msg: 'Current password is incorrect' });
+
+      // For users who signed up with Google and never set a password
+      if (!user.passwordHash) {
+        return res.status(400).json({
+          msg: 'Your account uses Google authentication only. Please set a password via the profile page after verifying your Google identity.',
+        });
       }
+
+      // Verify current password against stored hash
+      const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!valid) {
+        return res.status(400).json({ msg: 'Current password is incorrect' });
+      }
+
       if (newPassword.length < 6) {
         return res.status(400).json({ msg: 'New password must be at least 6 characters' });
       }
+
+      if (newPassword === currentPassword) {
+        return res.status(400).json({ msg: 'New password must be different from your current password' });
+      }
+
       user.passwordHash = await bcrypt.hash(newPassword, 10);
     }
 
