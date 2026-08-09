@@ -125,6 +125,15 @@ const Profile = () => {
   };
 
   const handleSavePassword = async () => {
+    // Step 1: current password is always required
+    if (!currentPassword) {
+      toast({
+        variant: 'destructive',
+        title: 'Current password required',
+        description: 'Please enter your current password to proceed.',
+      });
+      return;
+    }
     if (newPassword !== confirmPassword) {
       toast({ variant: 'destructive', title: 'Passwords do not match' });
       return;
@@ -133,7 +142,15 @@ const Profile = () => {
       toast({
         variant: 'destructive',
         title: 'Password too short',
-        description: 'Must be at least 6 characters.',
+        description: 'New password must be at least 6 characters.',
+      });
+      return;
+    }
+    if (newPassword === currentPassword) {
+      toast({
+        variant: 'destructive',
+        title: 'Same password',
+        description: 'New password must be different from your current password.',
       });
       return;
     }
@@ -459,35 +476,41 @@ const Profile = () => {
             </CardContent>
           ) : (
             <CardContent className="space-y-4">
-              {/* Current Password — only for non-pure Google accounts */}
-              {!user.googleId && (
-                <div className="space-y-1.5">
-                  <Label htmlFor="current-password" className="text-sm font-medium">
-                    Current Password
-                  </Label>
-                  <div className="relative group">
-                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input
-                      id="current-password"
-                      type={showCurrentPw ? 'text' : 'password'}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter current password"
-                      className="pl-10 pr-10 bg-background/60 focus:bg-background transition-colors"
-                      autoFocus
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-muted-foreground hover:text-foreground"
-                      onClick={() => setShowCurrentPw((p) => !p)}
-                    >
-                      {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
+              {/* Current Password — ALWAYS required */}
+              <div className="space-y-1.5">
+                <Label htmlFor="current-password" className="text-sm font-medium flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                  Current Password
+                  <span className="text-red-500 text-xs font-normal ml-0.5">*</span>
+                </Label>
+                <div className="relative group">
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    id="current-password"
+                    type={showCurrentPw ? 'text' : 'password'}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter your current password"
+                    className={`pl-10 pr-10 bg-background/60 focus:bg-background transition-colors ${
+                      currentPassword
+                        ? 'border-input'
+                        : ''
+                    }`}
+                    autoFocus
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowCurrentPw((p) => !p)}
+                  >
+                    {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
                 </div>
-              )}
+                <p className="text-xs text-muted-foreground">You must verify your current password before setting a new one.</p>
+              </div>
 
               {/* New Password */}
               <div className="space-y-1.5">
@@ -503,7 +526,6 @@ const Profile = () => {
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password (min 6 chars)"
                     className="pl-10 pr-10 bg-background/60 focus:bg-background transition-colors"
-                    autoFocus={!!user.googleId}
                   />
                   <Button
                     type="button"
@@ -589,7 +611,7 @@ const Profile = () => {
               <div className="flex gap-3 pt-2">
                 <Button
                   onClick={handleSavePassword}
-                  disabled={isSavingPassword || !newPassword || !confirmPassword}
+                  disabled={isSavingPassword || !currentPassword || !newPassword || !confirmPassword}
                   className="flex-1 gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:opacity-90 text-white transition-opacity"
                 >
                   {isSavingPassword ? (
