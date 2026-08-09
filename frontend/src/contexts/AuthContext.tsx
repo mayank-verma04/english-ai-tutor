@@ -11,17 +11,27 @@ interface User {
     count: number;
     lastActive: string | null;
   };
+  googleId: string | null;
+  createdAt?: string;
+}
+
+interface UpdateProfileData {
+  name?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  googleLogin: (token: string) => Promise<void>; // Added this
+  googleLogin: (token: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
   refreshStreak: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  updateProfile: (data: UpdateProfileData) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,11 +50,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Helper to fetch gamification data (streak, leaderboard)
+  // Helper to fetch user profile + gamification data
   const fetchUserData = async (token: string) => {
     try {
-      const [streakResponse, leaderboardResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/streak`, {
+      const [profileRes, leaderboardRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${API_BASE_URL}/leaderboard`, {
@@ -52,21 +62,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }),
       ]);
 
-      if (streakResponse.ok && leaderboardResponse.ok) {
-        const streakData = await streakResponse.json();
-        const leaderboardData = await leaderboardResponse.json();
-        const currentUserData = leaderboardData.currentUser;
+      if (profileRes.ok) {
+        const profileData = await profileRes.json();
+        let rank = 0;
 
-        // Ensure we have a fallback for ID if leaderboard structure varies
-        const userId = currentUserData?.userId || token;
+        if (leaderboardRes.ok) {
+          const leaderboardData = await leaderboardRes.json();
+          rank = leaderboardData.currentUser?.rank || 0;
+        }
 
         setUser({
-          id: userId,
-          name: currentUserData?.name || 'User',
-          email: currentUserData?.email || 'user@example.com',
-          points: currentUserData?.points || 0,
-          rank: currentUserData?.rank || 0,
-          streak: streakData,
+          id: profileData.id,
+          name: profileData.name || 'User',
+          email: profileData.email || '',
+          points: profileData.points || 0,
+          rank,
+          streak: profileData.streak || { count: 0, lastActive: null },
+          googleId: profileData.googleId || null,
+          createdAt: profileData.createdAt,
         });
       }
     } catch (error) {
@@ -167,6 +180,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  // Update Profile
+  const updateProfile = async (data: UpdateProfileData) => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Not authenticated');
+
+    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.msg || 'Failed to update profile');
+    }
+
+    // Refresh user data after successful update
+    await fetchUserData(token);
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -181,6 +217,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     isLoading,
     refreshStreak,
     refreshUser,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

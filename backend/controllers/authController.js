@@ -4,6 +4,72 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { OAuth2Client } = require('google-auth-library');
 
+// GET /api/auth/profile  — returns logged-in user details
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-passwordHash -__v');
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      points: user.points,
+      streak: user.streak,
+      googleId: user.googleId || null,
+      createdAt: user.createdAt,
+    });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// PUT /api/auth/profile  — update name, email, and/or password
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, email, currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    // Update name
+    if (name && name.trim()) {
+      user.name = name.trim();
+    }
+
+    // Update email
+    if (email && email.trim() && email.toLowerCase() !== user.email) {
+      const emailExists = await User.findOne({ email: email.toLowerCase() });
+      if (emailExists) return res.status(400).json({ msg: 'Email already in use' });
+      user.email = email.toLowerCase();
+    }
+
+    // Update password
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ msg: 'Current password is required to set a new password' });
+      }
+      // Google users with no passwordHash cannot verify old password the normal way
+      if (user.passwordHash) {
+        const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!valid) return res.status(400).json({ msg: 'Current password is incorrect' });
+      }
+      if (newPassword.length < 6) {
+        return res.status(400).json({ msg: 'New password must be at least 6 characters' });
+      }
+      user.passwordHash = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.json({
+      msg: 'Profile updated successfully',
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.register = async (req, res) => {

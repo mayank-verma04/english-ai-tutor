@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ModeToggle } from "@/components/mode-toggle"; // Ensure this is imported
+import { ModeToggle } from "@/components/mode-toggle";
 
 import { 
   BookOpen, 
@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Target,
   Brain,
-  Zap
+  Zap,
+  User
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -64,7 +65,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-soft transition-colors duration-300">
-      {/* Header - Fixed bg-white issue */}
+      {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -77,9 +78,21 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
-               {/* Mode Toggle Positioned Here */}
+            <div className="flex items-center space-x-3">
               <ModeToggle />
+              {/* User Avatar -> Profile Link */}
+              <button
+                onClick={() => navigate('/profile')}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
+                aria-label="View profile"
+              >
+                <div className="w-7 h-7 rounded-full bg-gradient-primary flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                  {user?.name ? user.name[0].toUpperCase() : <User className="w-3.5 h-3.5" />}
+                </div>
+                <span className="text-sm font-medium text-foreground hidden sm:block max-w-[120px] truncate group-hover:text-primary transition-colors">
+                  {user?.name || 'Profile'}
+                </span>
+              </button>
               <Button variant="outline" onClick={logout} className="text-sm hover:bg-destructive/10 hover:text-destructive transition-colors">
                 Logout
               </Button>
@@ -90,6 +103,25 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
         
+        {/* Welcome Banner */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">
+              Welcome back, <span className="text-primary">{user?.name?.split(' ')[0] || 'Learner'}</span>! 👋
+            </h2>
+            <p className="text-muted-foreground text-sm mt-0.5">Here's your learning overview for today.</p>
+          </div>
+          <button
+            onClick={() => navigate('/profile')}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+          >
+            <span className="hidden sm:block">View Profile</span>
+            <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold shadow-md group-hover:scale-110 transition-transform">
+              {user?.name ? user.name[0].toUpperCase() : '?'}
+            </div>
+          </button>
+        </div>
+
         {/* STATS OVERVIEW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (

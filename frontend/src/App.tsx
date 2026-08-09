@@ -34,6 +34,7 @@ import Report from "./pages/Report";
 import PersuasiveWriting from "./pages/PersuasiveWriting";
 import PersuasiveWritingDetail from "./pages/PersuasiveWritingDetail";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 const queryClient = new QueryClient();
 
@@ -41,7 +42,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     {/* Theme Provider wrapping the app */}
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class">
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ""}>
       <TooltipProvider>
         <AuthProvider>
           <Toaster />
@@ -99,6 +100,13 @@ const App = () => (
               <Route path="/persuasive-writing" element={<ProtectedRoute><PersuasiveWriting /></ProtectedRoute>} />
               <Route path="/persuasive-writing-detail" element={<ProtectedRoute><PersuasiveWritingDetail /></ProtectedRoute>} />
               
+              {/* Profile Route */}
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+
               {/* 404 Route */}
               <Route path="*" element={<NotFound />} />
             </Routes>

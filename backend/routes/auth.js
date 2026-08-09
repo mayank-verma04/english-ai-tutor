@@ -1,10 +1,16 @@
 // routes/auth.js
 const express = require("express");
-const { register, login,googleLogin } = require("../controllers/authController");
+const { register, login, googleLogin, getProfile, updateProfile } = require("../controllers/authController");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
 router.post("/google", googleLogin);
+
+// Profile routes (protected)
+router.get("/profile", authMiddleware, getProfile);
+router.put("/profile", authMiddleware, updateProfile);
+
 module.exports = router;
