@@ -35,6 +35,9 @@ import PersuasiveWriting from "./pages/PersuasiveWriting";
 import PersuasiveWritingDetail from "./pages/PersuasiveWritingDetail";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 const queryClient = new QueryClient();
 
@@ -53,6 +56,9 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
               
               {/* Protected Routes */}
               <Route path="/dashboard" element={
