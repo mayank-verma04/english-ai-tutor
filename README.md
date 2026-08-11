@@ -280,5 +280,5 @@ This project is licensed under the **ISC License**.
 ---
 
 <p center align="center">
-  Crafted with ❤️ by <strong>Mayank Verma</strong>
+  Crafted by <strong>Mayank Verma</strong>
 </p>
