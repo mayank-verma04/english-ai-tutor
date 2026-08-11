@@ -19,7 +19,7 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        
+
         // Core Brand Colors
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -32,7 +32,7 @@ export default {
           foreground: "hsl(var(--secondary-foreground))",
           hover: "hsl(var(--secondary-hover))",
         },
-        
+
         // Educational Color System
         success: {
           DEFAULT: "hsl(var(--success))",
@@ -45,12 +45,12 @@ export default {
           foreground: "hsl(var(--warning-foreground))",
           soft: "hsl(var(--warning-soft))",
         },
-        
+
         // Level Colors
         beginner: "hsl(var(--beginner))",
         intermediate: "hsl(var(--intermediate))",
         advanced: "hsl(var(--advanced))",
-        
+
         // Module Colors
         comprehension: {
           DEFAULT: "hsl(var(--comprehension))",
@@ -62,12 +62,12 @@ export default {
           light: "hsl(var(--composition-light))",
           soft: "hsl(var(--composition-soft))",
         },
-        
+
         // Surface Colors
         surface: {
           soft: "hsl(var(--surface-soft))",
         },
-        
+
         // Semantic Colors
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -115,7 +115,7 @@ export default {
         'strong': 'var(--shadow-strong)',
         'glow': 'var(--shadow-glow)',
       },
-      
+
       // Background Images & Gradients
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',
@@ -124,13 +124,13 @@ export default {
         'gradient-composition': 'var(--gradient-composition)',
         'gradient-soft': 'var(--gradient-soft)',
       },
-      
+
       // Transitions
       transitionTimingFunction: {
         'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
         'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
-      
+
       keyframes: {
         // Accordion Animations
         "accordion-down": {
@@ -141,7 +141,7 @@ export default {
           from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
           to: { height: "0", opacity: "0" },
         },
-        
+
         // Educational App Animations
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(10px)" },
@@ -164,8 +164,37 @@ export default {
           "50%": { boxShadow: "0 0 20px hsl(var(--success)), 0 0 30px hsl(var(--success))" },
           "100%": { boxShadow: "0 0 5px hsl(var(--success))" },
         },
+        "marquee": {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+          "33%": { transform: "translateY(-8px) rotate(1deg)" },
+          "66%": { transform: "translateY(-4px) rotate(-1deg)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% center" },
+          "100%": { backgroundPosition: "200% center" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "0.7", transform: "scale(1.05)" },
+        },
+        "slide-in-left": {
+          "0%": { transform: "translateX(-30px)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "slide-in-right": {
+          "0%": { transform: "translateX(30px)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "count-up": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
-      
+
       animation: {
         // Base Animations
         "accordion-down": "accordion-down 0.3s ease-out",
@@ -173,11 +202,23 @@ export default {
         "fade-in": "fade-in 0.4s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
         "slide-up": "slide-up 0.4s ease-out",
-        
+
         // Interactive Animations
         "bounce-gentle": "bounce-gentle 2s ease-in-out infinite",
         "progress-glow": "progress-glow 2s ease-in-out infinite",
-        
+
+        // Marquee
+        "marquee": "marquee 30s linear infinite",
+        "marquee-hover": "marquee 30s linear infinite paused",
+
+        // Decorative
+        "float": "float 6s ease-in-out infinite",
+        "shimmer": "shimmer 3s linear infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        "slide-in-left": "slide-in-left 0.5s ease-out both",
+        "slide-in-right": "slide-in-right 0.5s ease-out both",
+        "count-up": "count-up 0.6s ease-out both",
+
         // Staggered Animations
         "fade-in-delay-100": "fade-in 0.4s ease-out 0.1s both",
         "fade-in-delay-200": "fade-in 0.4s ease-out 0.2s both",
