@@ -19,6 +19,9 @@ import {
   Twitter,
   Linkedin,
   Mail,
+  Play,
+  Pause,
+  Quote,
 } from "lucide-react";
 
 // ─── Marquee data ─────────────────────────────────────────────────────────────
@@ -98,23 +101,59 @@ const TESTIMONIALS = [
     role: "Class 10 Student",
     text: "My essay scores jumped two grades in a month. The AI doesn't just mark it wrong — it tells me exactly why and shows me a better version.",
     avatar: "PS",
-    color: "#6366F1",
+    color: "linear-gradient(135deg, #6366F1, #8B5CF6)",
+    badge: "+2 Grades Improvement",
+    rating: 5,
   },
   {
     name: "Arjun Mehta",
-    role: "IELTS Aspirant",
+    role: "IELTS Candidate",
     text: "The tone analysis feature is what no other platform offers. I finally understand why my writing feels stiff, and how to loosen it up.",
     avatar: "AM",
-    color: "#34D399",
+    color: "linear-gradient(135deg, #10B981, #059669)",
+    badge: "IELTS Band 8.5",
+    rating: 5,
   },
   {
     name: "Lakshmi R.",
     role: "School Teacher",
     text: "I recommend this to my entire class now. The leaderboard keeps them engaged longer than anything else I've tried.",
     avatar: "LR",
-    color: "#F59E0B",
+    color: "linear-gradient(135deg, #F59E0B, #D97706)",
+    badge: "Teacher Verified",
+    rating: 5,
+  },
+  {
+    name: "Rohan Verma",
+    role: "Software Engineer",
+    text: "Drafting executive communications used to take me 30 minutes. Now with Tone Practice, I write crisp, clear reports effortlessly.",
+    avatar: "RV",
+    color: "linear-gradient(135deg, #EC4899, #DB2777)",
+    badge: "Professional Writing",
+    rating: 5,
+  },
+  {
+    name: "Ananya Roy",
+    role: "TOEFL Aspirant",
+    text: "The instant feedback on grammar and contextual definitions inside comprehension passages sped up my preparation immensely!",
+    avatar: "AR",
+    color: "linear-gradient(135deg, #0EA5E9, #0284C7)",
+    badge: "TOEFL 112/120",
+    rating: 5,
+  },
+  {
+    name: "David Chen",
+    role: "University Researcher",
+    text: "The academic sentence formation and essay structure feedback helped me publish my first research paper in English with confidence.",
+    avatar: "DC",
+    color: "linear-gradient(135deg, #8B5CF6, #7C3AED)",
+    badge: "Academic Excellence",
+    rating: 5,
   },
 ];
+
+const ROW1_TESTIMONIALS = [...TESTIMONIALS.slice(0, 3), ...TESTIMONIALS.slice(0, 3), ...TESTIMONIALS.slice(0, 3)];
+const ROW2_TESTIMONIALS = [...TESTIMONIALS.slice(3, 6), ...TESTIMONIALS.slice(3, 6), ...TESTIMONIALS.slice(3, 6)];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -122,6 +161,8 @@ const Index = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [marqueeHovered, setMarqueeHovered] = useState(false);
+  const [testimonialPaused, setTestimonialPaused] = useState(false);
+  const [testimonialHovered, setTestimonialHovered] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -340,35 +381,110 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ───────────────────────────────────────────── */}
-      <section className="home-testimonials" id="testimonials">
-        <div className="home-section-eyebrow">
-          <Star size={14} /> Real results
-        </div>
-        <h2 className="home-section-title">Students who made the leap</h2>
-
-        <div className="home-testimonials__grid">
-          {TESTIMONIALS.map((t, i) => (
-            <div key={i} className="home-testimonial-card">
-              <div className="home-testimonial-card__stars">
-                {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={13} fill="#F59E0B" color="#F59E0B" />
-                ))}
-              </div>
-              <p className="home-testimonial-card__text">"{t.text}"</p>
-              <div className="home-testimonial-card__author">
-                <div className="home-testimonial-card__avatar" style={{ background: t.color }}>
-                  {t.avatar}
-                </div>
-                <div>
-                  <div className="home-testimonial-card__name">{t.name}</div>
-                  <div className="home-testimonial-card__role">{t.role}</div>
-                </div>
-              </div>
+      {/* ── TESTIMONIALS MARQUEE ───────────────────────────────────── */}
+      <section className="home-testimonials-section" id="testimonials">
+        <div className="home-testimonials__header">
+          <div>
+            <div className="home-section-eyebrow">
+              <Star size={14} /> Real results
             </div>
-          ))}
+            <h2 className="home-section-title">Students who made the leap</h2>
+            <p className="home-section-sub">
+              Hear from learners, test takers, and educators achieving real progress with AI-guided tutoring.
+            </p>
+          </div>
+
+          <div className="home-testimonials__controls">
+            <button
+              className="home-testimonials__control-btn"
+              onClick={() => setTestimonialPaused(!testimonialPaused)}
+              aria-label={testimonialPaused ? "Resume auto scroll" : "Pause auto scroll"}
+            >
+              {testimonialPaused ? <Play size={14} /> : <Pause size={14} />}
+              <span>{testimonialPaused ? "Resume" : "Pause"}</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          className="home-testimonials-marquee-wrap"
+          onMouseEnter={() => setTestimonialHovered(true)}
+          onMouseLeave={() => setTestimonialHovered(false)}
+        >
+          <div className="home-marquee-section__fade-left" />
+          <div className="home-marquee-section__fade-right" />
+
+          {/* Row 1: Leftward infinite scroll */}
+          <div
+            className="home-testimonials-marquee-track"
+            style={{
+              animationPlayState: (testimonialPaused || testimonialHovered) ? "paused" : "running"
+            }}
+          >
+            {ROW1_TESTIMONIALS.map((t, i) => (
+              <div key={`r1-${i}`} className="home-testimonial-card--marquee">
+                <div>
+                  <div className="home-testimonial-card__header">
+                    <div className="home-testimonial-card__stars">
+                      {[...Array(t.rating)].map((_, j) => (
+                        <Star key={j} size={13} fill="#F59E0B" color="#F59E0B" />
+                      ))}
+                    </div>
+                    <span className="home-testimonial-card__badge">{t.badge}</span>
+                  </div>
+                  <Quote size={20} className="home-testimonial-card__quote-icon" />
+                  <p className="home-testimonial-card__text">"{t.text}"</p>
+                </div>
+                <div className="home-testimonial-card__author">
+                  <div className="home-testimonial-card__avatar" style={{ background: t.color }}>
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <div className="home-testimonial-card__name">{t.name}</div>
+                    <div className="home-testimonial-card__role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Row 2: Rightward infinite scroll */}
+          <div
+            className="home-testimonials-marquee-track home-testimonials-marquee-track--reverse"
+            style={{
+              animationPlayState: (testimonialPaused || testimonialHovered) ? "paused" : "running",
+              marginTop: "1.25rem"
+            }}
+          >
+            {ROW2_TESTIMONIALS.map((t, i) => (
+              <div key={`r2-${i}`} className="home-testimonial-card--marquee">
+                <div>
+                  <div className="home-testimonial-card__header">
+                    <div className="home-testimonial-card__stars">
+                      {[...Array(t.rating)].map((_, j) => (
+                        <Star key={j} size={13} fill="#F59E0B" color="#F59E0B" />
+                      ))}
+                    </div>
+                    <span className="home-testimonial-card__badge">{t.badge}</span>
+                  </div>
+                  <Quote size={20} className="home-testimonial-card__quote-icon" />
+                  <p className="home-testimonial-card__text">"{t.text}"</p>
+                </div>
+                <div className="home-testimonial-card__author">
+                  <div className="home-testimonial-card__avatar" style={{ background: t.color }}>
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <div className="home-testimonial-card__name">{t.name}</div>
+                    <div className="home-testimonial-card__role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
+
 
       {/* ── CTA ────────────────────────────────────────────────────── */}
       <section className="home-cta" id="cta">
