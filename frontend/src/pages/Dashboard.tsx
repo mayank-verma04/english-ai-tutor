@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ModeToggle } from "@/components/mode-toggle";
 
-import { 
-  BookOpen, 
-  PenTool, 
-  Trophy, 
-  Flame, 
+import {
+  BookOpen,
+  PenTool,
+  Trophy,
+  Flame,
   Star,
   ChevronRight,
   Target,
@@ -77,7 +77,7 @@ const Dashboard = () => {
                 <h1 className="text-xl font-bold text-foreground tracking-tight">English Tutor AI</h1>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <ModeToggle />
               {/* User Avatar -> Profile Link */}
@@ -102,31 +102,20 @@ const Dashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-        
+
         {/* Welcome Banner */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">
-              Welcome back, <span className="text-primary">{user?.name?.split(' ')[0] || 'Learner'}</span>! 👋
-            </h2>
-            <p className="text-muted-foreground text-sm mt-0.5">Here's your learning overview for today.</p>
-          </div>
-          <button
-            onClick={() => navigate('/profile')}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
-          >
-            <span className="hidden sm:block">View Profile</span>
-            <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold shadow-md group-hover:scale-110 transition-transform">
-              {user?.name ? user.name[0].toUpperCase() : '?'}
-            </div>
-          </button>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground">
+            Welcome back, <span className="text-primary">{user?.name?.split(' ')[0] || 'Learner'}</span>! 👋
+          </h2>
+          <p className="text-muted-foreground text-sm mt-0.5">Here's your learning overview for today.</p>
         </div>
 
         {/* STATS OVERVIEW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
-            <Card 
-              key={stat.label} 
+            <Card
+              key={stat.label}
               className={`
                 shadow-soft border-border/50
                 relative overflow-hidden 
@@ -137,7 +126,7 @@ const Dashboard = () => {
               `}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div 
+              <div
                 className={`
                   absolute inset-x-0 bottom-0 h-1 
                   ${stat.color.replace('text-', 'bg-')}
@@ -145,7 +134,7 @@ const Dashboard = () => {
                   group-hover:translate-y-0
                 `}
               ></div>
-              
+
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className={`p-3 rounded-xl bg-muted/50 transition-colors duration-300 group-hover:bg-accent ${stat.color}`}>
@@ -162,7 +151,7 @@ const Dashboard = () => {
             </Card>
           ))}
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Learning Modules */}
           <div className="lg:col-span-2 space-y-6">
@@ -172,8 +161,8 @@ const Dashboard = () => {
             </div>
 
             {modules.map((module, moduleIndex) => (
-              <Card 
-                key={module.id} 
+              <Card
+                key={module.id}
                 className="shadow-medium border-border/50 cursor-pointer hover:shadow-glow hover:border-primary/30 transition-all duration-300 hover:translate-x-1 group bg-card"
                 onClick={() => handleModuleClick(module.id)}
               >
@@ -204,61 +193,61 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-              {/* Leaderboard Card */}
-              <Card className="mt-14 border-border/50 shadow-medium hover:shadow-lg transition-all">
-                <CardHeader>
-                  <div className="flex items-start gap-x-4">
-                    <div className="flex-shrink-0 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                      <Trophy className="w-6 h-6 text-yellow-600 dark:text-yellow-500" />
-                    </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">Leaderboard</CardTitle>
-                      <CardDescription className="mt-1">
-                        Compete with others and earn your spot at the top!
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                   <div className="bg-muted/30 p-4 rounded-md text-sm text-muted-foreground">
-                      Current Rank: <span className="font-bold text-foreground">{user?.rank ? `#${user.rank}` : 'Unranked'}</span>
-                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full hover:bg-accent" onClick={handleViewLeaderboard}>
-                    View Full Leaderboard
-                  </Button>
-                </CardFooter>
-              </Card>
-          </div>
-        </div>
-
-        {/* On Demand Tests */}
-          <div className="space-y-6 mt-12">
-            <div className="flex items-center space-x-2 mb-4">
-              <Brain className="w-6 h-6 text-primary" />
-              <h2 className="text-2xl font-bold text-foreground">On-Demand Tests</h2>
-            </div>
-            <Card className="shadow-medium border-border/50 hover:shadow-glow transition-all duration-300 hover:border-primary/30 group bg-card">
+            {/* Leaderboard Card */}
+            <Card className="mt-14 border-border/50 shadow-medium hover:shadow-lg transition-all">
               <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform duration-300">
-                    <Zap className="w-8 h-8 text-white" />
+                <div className="flex items-start gap-x-4">
+                  <div className="flex-shrink-0 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                    <Trophy className="w-6 h-6 text-yellow-600 dark:text-yellow-500" />
                   </div>
                   <div className="flex-1">
-                    <CardTitle className='pb-2 text-xl'>Skill Assessment</CardTitle>
-                    <CardDescription className="mt-1 text-base">Test your knowledge with AI-generated quizzes tailored to your level.</CardDescription>
+                    <CardTitle className="text-lg">Leaderboard</CardTitle>
+                    <CardDescription className="mt-1">
+                      Compete with others and earn your spot at the top!
+                    </CardDescription>
                   </div>
-                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </CardHeader>
+              <CardContent>
+                <div className="bg-muted/30 p-4 rounded-md text-sm text-muted-foreground">
+                  Current Rank: <span className="font-bold text-foreground">{user?.rank ? `#${user.rank}` : 'Unranked'}</span>
+                </div>
+              </CardContent>
               <CardFooter>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-white" onClick={() => navigate('/on-demand-test')}>
-                  Start Assessment
+                <Button variant="outline" className="w-full hover:bg-accent" onClick={handleViewLeaderboard}>
+                  View Full Leaderboard
                 </Button>
               </CardFooter>
             </Card>
           </div>
+        </div>
+
+        {/* On Demand Tests */}
+        <div className="space-y-6 mt-12">
+          <div className="flex items-center space-x-2 mb-4">
+            <Brain className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">On-Demand Tests</h2>
+          </div>
+          <Card className="shadow-medium border-border/50 hover:shadow-glow transition-all duration-300 hover:border-primary/30 group bg-card">
+            <CardHeader>
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className='pb-2 text-xl'>Skill Assessment</CardTitle>
+                  <CardDescription className="mt-1 text-base">Test your knowledge with AI-generated quizzes tailored to your level.</CardDescription>
+                </div>
+                <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+            </CardHeader>
+            <CardFooter>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-white" onClick={() => navigate('/on-demand-test')}>
+                Start Assessment
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
 
       {/* Footer - Fixed bg-white issue */}
