@@ -4,11 +4,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ModeToggle } from "@/components/mode-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import {
   BookOpen,
   PenTool,
   ChevronRight,
+  ChevronDown,
   Target,
   Brain,
   Zap,
@@ -58,23 +67,23 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-background transition-colors duration-300 flex flex-col justify-between overflow-x-hidden">
+    <div className="relative min-h-screen lg:h-screen lg:max-h-screen bg-background transition-colors duration-300 flex flex-col justify-between overflow-y-auto lg:overflow-hidden">
       {/* Background Ambient Glow Orbs */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute top-[40%] left-[-100px] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-[40%] left-[-100px] w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* Futuristic Navbar */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      {/* Header Navigation */}
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-14">
             
             {/* Logo */}
             <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
-              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/25 transform hover:scale-105 transition-transform duration-300">
-                <BookOpen className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 bg-gradient-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/25 transform hover:scale-105 transition-transform duration-300">
+                <BookOpen className="w-4 h-4 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-black font-display tracking-tight text-foreground flex items-center gap-1.5">
+                <span className="text-base font-black font-display tracking-tight text-foreground flex items-center gap-1.5">
                   Lexicon <span className="gradient-text">AI</span>
                 </span>
               </div>
@@ -84,30 +93,55 @@ const Dashboard = () => {
             <div className="flex items-center space-x-3">
               <ModeToggle />
 
-              {/* Profile Pill */}
-              <button
-                onClick={() => navigate('/profile')}
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-card/80 border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group shadow-sm"
-                aria-label="View profile"
-              >
-                <div className="w-7 h-7 rounded-full bg-gradient-primary flex items-center justify-center text-white text-xs font-bold shadow-sm">
-                  {user?.name ? user.name[0].toUpperCase() : <User className="w-3.5 h-3.5" />}
-                </div>
-                <span className="text-sm font-semibold text-foreground hidden sm:block max-w-[120px] truncate group-hover:text-primary transition-colors">
-                  {user?.name || 'Learner'}
-                </span>
-              </button>
+              {/* User Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="flex items-center gap-2 px-3 py-1 rounded-full bg-card/80 border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group shadow-sm text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                    aria-label="User profile menu"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-gradient-primary flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
+                      {user?.name ? user.name[0].toUpperCase() : <User className="w-3 h-3" />}
+                    </div>
+                    <span className="font-semibold text-foreground hidden sm:block max-w-[110px] truncate group-hover:text-primary transition-colors">
+                      {user?.name || 'Learner'}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  </button>
+                </DropdownMenuTrigger>
 
-              {/* Logout Button */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={logout} 
-                className="rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors gap-1.5 text-xs font-medium"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Logout</span>
-              </Button>
+                <DropdownMenuContent align="end" className="w-56 glass-card border-border/60 shadow-2xl rounded-2xl p-1.5 mt-1">
+                  <DropdownMenuLabel className="font-normal p-2">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-bold text-foreground font-display leading-none">{user?.name || 'Learner'}</p>
+                      <p className="text-[11px] text-muted-foreground leading-none truncate">{user?.email || ''}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="my-1 bg-border/60" />
+                  <DropdownMenuItem 
+                    onClick={() => navigate('/profile')}
+                    className="cursor-pointer rounded-xl py-2 px-3 focus:bg-primary/10 focus:text-primary font-medium text-xs gap-2.5"
+                  >
+                    <User className="w-4 h-4 text-primary" />
+                    View Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => navigate('/leaderboard')}
+                    className="cursor-pointer rounded-xl py-2 px-3 focus:bg-primary/10 focus:text-primary font-medium text-xs gap-2.5"
+                  >
+                    <Award className="w-4 h-4 text-amber-500" />
+                    Leaderboard
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-1 bg-border/60" />
+                  <DropdownMenuItem 
+                    onClick={logout}
+                    className="cursor-pointer rounded-xl py-2 px-3 text-destructive focus:bg-destructive/10 focus:text-destructive font-medium text-xs gap-2.5"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
