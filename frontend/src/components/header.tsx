@@ -40,37 +40,37 @@ export const Header = ({
 
   return (
     <header className={cn(
-      "sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300",
+      "sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 transition-all duration-300 shadow-sm",
       className
     )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left Section: Back Button & Title */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             {showBack && (
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleBack}
-                className="rounded-full hover:bg-muted transition-colors mr-2"
+                className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200 group"
                 aria-label="Go back"
               >
-                <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+                <ArrowLeft className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:-translate-x-0.5 transition-transform" />
               </Button>
             )}
 
             <div className="flex items-center gap-3">
               {Icon && (
                 <div className={cn(
-                  "p-2 rounded-lg flex items-center justify-center shadow-sm",
-                  iconBgColor || "bg-primary/10",
+                  "p-2.5 rounded-xl flex items-center justify-center shadow-md shadow-primary/10 transition-all duration-300 group-hover:scale-105",
+                  iconBgColor || "bg-gradient-to-br from-primary/20 to-purple-500/20 text-primary border border-primary/20",
                   iconColor || "text-primary"
                 )}>
                   <Icon className="w-5 h-5" />
                 </div>
               )}
               <div className="flex flex-col">
-                <h1 className="text-lg font-bold text-foreground leading-tight tracking-tight">
+                <h1 className="text-lg font-bold text-foreground leading-tight tracking-tight font-display flex items-center gap-2">
                   {title}
                 </h1>
                 {subtitle && (
@@ -83,9 +83,9 @@ export const Header = ({
           </div>
 
           {/* Right Section: Actions & Mode Toggle */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {children}
-            <div className="pl-2 border-l border-border/50 ml-2">
+            <div className="pl-3 border-l border-border/60 flex items-center">
                <ModeToggle />
             </div>
           </div>
