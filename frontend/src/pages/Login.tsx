@@ -96,7 +96,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen lg:h-screen lg:max-h-screen bg-background transition-colors duration-300 flex flex-col justify-between overflow-y-auto lg:overflow-hidden">
+    <div className="relative min-h-screen bg-background transition-colors duration-300 flex flex-col justify-between overflow-y-auto">
       {/* Dynamic Background Glow Fields */}
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[130px] pointer-events-none animate-pulse" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[150px] pointer-events-none" />

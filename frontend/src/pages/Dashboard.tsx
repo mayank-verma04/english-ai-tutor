@@ -67,7 +67,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="relative min-h-screen lg:h-screen lg:max-h-screen bg-background transition-colors duration-300 flex flex-col justify-between overflow-y-auto lg:overflow-hidden">
+    <div className="relative min-h-screen bg-background transition-colors duration-300 flex flex-col justify-between overflow-y-auto">
       {/* Background Ambient Glow Orbs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute top-[40%] left-[-100px] w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none" />
