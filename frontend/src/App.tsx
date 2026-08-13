@@ -4,122 +4,164 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider"; // Ensure this is imported if used
+import { ThemeProvider } from "@/components/theme-provider";
 import ProtectedRoute from "@/components/ProtectedRoute";
-
-// Pages
-import Index from "./pages/Index"; // Import the new Home Page
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Leaderboard from "./pages/Leaderboard";
-import OnDemandTestPage from "./pages/OnDemandTestPage";
-import ComprehensionModule from "./pages/ComprehensionModule";
-import CompositionModule from "./pages/CompositionModule";
-import Vocabulary from "./pages/Vocabulary";
-import Sentence from "./pages/Sentence";
-import PassageList from "./pages/PassageList";
-import Passage from "./pages/Passage";
-import SentenceFormation from "./pages/SentenceFormation";
-import ShortParagraphs from "./pages/ShortParagraphs";
-import ShortParagraph from "./pages/ShortParagraph";
-import TonePractice from "./pages/TonePractice";
-import TonePracticeDetail from "./pages/TonePracticeDetail";
-import Letters from "./pages/Letters";
-import Letter from "./pages/Letter";
-import Essays from "./pages/Essays";
-import Essay from "./pages/Essay";
-import Reports from "./pages/Reports";
-import Report from "./pages/Report";
-import PersuasiveWriting from "./pages/PersuasiveWriting";
-import PersuasiveWritingDetail from "./pages/PersuasiveWritingDetail";
-import NotFound from "./pages/NotFound";
-import Profile from "./pages/Profile";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import CookiePolicy from "./pages/CookiePolicy";
+import { lazy, Suspense } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
+// ── Skeleton fallbacks ──────────────────────────────────────────────────────
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
+import {
+  ListPageSkeleton,
+  ContentPageSkeleton,
+  LeaderboardSkeleton,
+  TestPageSkeleton,
+  ProfileSkeleton,
+} from "@/components/skeletons/PageSkeletons";
+
+// ── Lazy-loaded pages ───────────────────────────────────────────────────────
+// Public
+const Index       = lazy(() => import("./pages/Index"));
+const Login       = lazy(() => import("./pages/Login"));
+const Register    = lazy(() => import("./pages/Register"));
+const PrivacyPolicy    = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService   = lazy(() => import("./pages/TermsOfService"));
+const CookiePolicy     = lazy(() => import("./pages/CookiePolicy"));
+const NotFound         = lazy(() => import("./pages/NotFound"));
+
+// Protected — main
+const Dashboard   = lazy(() => import("./pages/Dashboard"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const OnDemandTestPage = lazy(() => import("./pages/OnDemandTestPage"));
+const Profile     = lazy(() => import("./pages/Profile"));
+
+// Modules
+const ComprehensionModule = lazy(() => import("./pages/ComprehensionModule"));
+const CompositionModule   = lazy(() => import("./pages/CompositionModule"));
+
+// Lessons
+const Vocabulary         = lazy(() => import("./pages/Vocabulary"));
+const Sentence           = lazy(() => import("./pages/Sentence"));
+const PassageList        = lazy(() => import("./pages/PassageList"));
+const Passage            = lazy(() => import("./pages/Passage"));
+const SentenceFormation  = lazy(() => import("./pages/SentenceFormation"));
+const ShortParagraphs    = lazy(() => import("./pages/ShortParagraphs"));
+const ShortParagraph     = lazy(() => import("./pages/ShortParagraph"));
+const TonePractice       = lazy(() => import("./pages/TonePractice"));
+const TonePracticeDetail = lazy(() => import("./pages/TonePracticeDetail"));
+const Letters            = lazy(() => import("./pages/Letters"));
+const Letter             = lazy(() => import("./pages/Letter"));
+const Essays             = lazy(() => import("./pages/Essays"));
+const Essay              = lazy(() => import("./pages/Essay"));
+const Reports            = lazy(() => import("./pages/Reports"));
+const Report             = lazy(() => import("./pages/Report"));
+const PersuasiveWriting       = lazy(() => import("./pages/PersuasiveWriting"));
+const PersuasiveWritingDetail = lazy(() => import("./pages/PersuasiveWritingDetail"));
+
+// ── Query Client ────────────────────────────────────────────────────────────
 const queryClient = new QueryClient();
 
+// ── Suspense wrappers with matching skeletons ───────────────────────────────
+const WithDashboard   = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<DashboardSkeleton />}>{children}</Suspense>
+);
+const WithLeaderboard = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<LeaderboardSkeleton />}>{children}</Suspense>
+);
+const WithTest        = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<TestPageSkeleton />}>{children}</Suspense>
+);
+const WithProfile     = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<ProfileSkeleton />}>{children}</Suspense>
+);
+const WithList        = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<ListPageSkeleton />}>{children}</Suspense>
+);
+const WithContent     = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<ContentPageSkeleton />}>{children}</Suspense>
+);
+// Public pages can use a minimal blank fallback (they load almost instantly)
+const WithPublic      = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<div className="min-h-screen bg-background" />}>{children}</Suspense>
+);
+
+// ── App ─────────────────────────────────────────────────────────────────────
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    {/* Theme Provider wrapping the app */}
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme" attribute="class">
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ""}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/cookie-policy" element={<CookiePolicy />} />
-              
-              {/* Protected Routes */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/leaderboard" element={
-                <ProtectedRoute>
-                  <Leaderboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/on-demand-test" element={
-                <ProtectedRoute>
-                  <OnDemandTestPage />
-                </ProtectedRoute>
-              } />
-              
-              {/* Module Routes */}
-              <Route path="/comprehension" element={<ProtectedRoute><ComprehensionModule /></ProtectedRoute>} />
-              <Route path="/composition" element={<ProtectedRoute><CompositionModule /></ProtectedRoute>} />
-              
-              {/* Lesson Routes */}
-              <Route path="/vocabulary" element={<ProtectedRoute><Vocabulary /></ProtectedRoute>} />
-              <Route path="/sentence" element={<ProtectedRoute><Sentence /></ProtectedRoute>} />
-              <Route path="/passages" element={<ProtectedRoute><PassageList /></ProtectedRoute>} />
-              <Route path="/passage" element={<ProtectedRoute><Passage /></ProtectedRoute>} />
-              
-              <Route path="/sentence-formation" element={<ProtectedRoute><SentenceFormation /></ProtectedRoute>} />
-              <Route path="/short-paragraphs" element={<ProtectedRoute><ShortParagraphs /></ProtectedRoute>} />
-              <Route path="/short-paragraph" element={<ProtectedRoute><ShortParagraph /></ProtectedRoute>} />
-              
-              <Route path="/tone-practice" element={<ProtectedRoute><TonePractice /></ProtectedRoute>} />
-              <Route path="/tone-practice-detail" element={<ProtectedRoute><TonePracticeDetail /></ProtectedRoute>} />
-              
-              <Route path="/letters" element={<ProtectedRoute><Letters /></ProtectedRoute>} />
-              <Route path="/letter" element={<ProtectedRoute><Letter /></ProtectedRoute>} />
-              
-              <Route path="/essays" element={<ProtectedRoute><Essays /></ProtectedRoute>} />
-              <Route path="/essay" element={<ProtectedRoute><Essay /></ProtectedRoute>} />
-              
-              <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-              <Route path="/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />
-              
-              <Route path="/persuasive-writing" element={<ProtectedRoute><PersuasiveWriting /></ProtectedRoute>} />
-              <Route path="/persuasive-writing-detail" element={<ProtectedRoute><PersuasiveWritingDetail /></ProtectedRoute>} />
-              
-              {/* Profile Route */}
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ""}>
+        <TooltipProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* ── Public Routes ─────────────────────────────────────── */}
+                <Route path="/" element={<WithPublic><Index /></WithPublic>} />
+                <Route path="/login"    element={<WithPublic><Login /></WithPublic>} />
+                <Route path="/register" element={<WithPublic><Register /></WithPublic>} />
+                <Route path="/privacy-policy"   element={<WithPublic><PrivacyPolicy /></WithPublic>} />
+                <Route path="/terms-of-service" element={<WithPublic><TermsOfService /></WithPublic>} />
+                <Route path="/cookie-policy"    element={<WithPublic><CookiePolicy /></WithPublic>} />
 
-              {/* 404 Route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
-    </GoogleOAuthProvider>
+                {/* ── Protected — Main ──────────────────────────────────── */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <WithDashboard><Dashboard /></WithDashboard>
+                  </ProtectedRoute>
+                } />
+                <Route path="/leaderboard" element={
+                  <ProtectedRoute>
+                    <WithLeaderboard><Leaderboard /></WithLeaderboard>
+                  </ProtectedRoute>
+                } />
+                <Route path="/on-demand-test" element={
+                  <ProtectedRoute>
+                    <WithTest><OnDemandTestPage /></WithTest>
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <WithProfile><Profile /></WithProfile>
+                  </ProtectedRoute>
+                } />
+
+                {/* ── Module Routes ─────────────────────────────────────── */}
+                <Route path="/comprehension" element={<ProtectedRoute><WithContent><ComprehensionModule /></WithContent></ProtectedRoute>} />
+                <Route path="/composition"   element={<ProtectedRoute><WithContent><CompositionModule /></WithContent></ProtectedRoute>} />
+
+                {/* ── Lesson Routes ─────────────────────────────────────── */}
+                <Route path="/vocabulary"   element={<ProtectedRoute><WithContent><Vocabulary /></WithContent></ProtectedRoute>} />
+                <Route path="/sentence"     element={<ProtectedRoute><WithContent><Sentence /></WithContent></ProtectedRoute>} />
+                <Route path="/passages"     element={<ProtectedRoute><WithList><PassageList /></WithList></ProtectedRoute>} />
+                <Route path="/passage"      element={<ProtectedRoute><WithContent><Passage /></WithContent></ProtectedRoute>} />
+
+                <Route path="/sentence-formation" element={<ProtectedRoute><WithContent><SentenceFormation /></WithContent></ProtectedRoute>} />
+                <Route path="/short-paragraphs"   element={<ProtectedRoute><WithList><ShortParagraphs /></WithList></ProtectedRoute>} />
+                <Route path="/short-paragraph"    element={<ProtectedRoute><WithContent><ShortParagraph /></WithContent></ProtectedRoute>} />
+
+                <Route path="/tone-practice"        element={<ProtectedRoute><WithList><TonePractice /></WithList></ProtectedRoute>} />
+                <Route path="/tone-practice-detail" element={<ProtectedRoute><WithContent><TonePracticeDetail /></WithContent></ProtectedRoute>} />
+
+                <Route path="/letters" element={<ProtectedRoute><WithList><Letters /></WithList></ProtectedRoute>} />
+                <Route path="/letter"  element={<ProtectedRoute><WithContent><Letter /></WithContent></ProtectedRoute>} />
+
+                <Route path="/essays" element={<ProtectedRoute><WithList><Essays /></WithList></ProtectedRoute>} />
+                <Route path="/essay"  element={<ProtectedRoute><WithContent><Essay /></WithContent></ProtectedRoute>} />
+
+                <Route path="/reports" element={<ProtectedRoute><WithList><Reports /></WithList></ProtectedRoute>} />
+                <Route path="/report"  element={<ProtectedRoute><WithContent><Report /></WithContent></ProtectedRoute>} />
+
+                <Route path="/persuasive-writing"        element={<ProtectedRoute><WithList><PersuasiveWriting /></WithList></ProtectedRoute>} />
+                <Route path="/persuasive-writing-detail" element={<ProtectedRoute><WithContent><PersuasiveWritingDetail /></WithContent></ProtectedRoute>} />
+
+                {/* ── 404 ───────────────────────────────────────────────── */}
+                <Route path="*" element={<WithPublic><NotFound /></WithPublic>} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </TooltipProvider>
+      </GoogleOAuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
